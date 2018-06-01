@@ -17,17 +17,19 @@ class App extends React.Component {
     }} />;
     return (
       <React.Fragment>
-        <Header />
-        <Container fluid={true}>
+        <Container>
+          <Header />
           <Row>
-            <Router>
-              <Switch>
-                {/* Redirect user to endpoint with appended slash */}
-                <Route exact={true} strict={true} path="/:url*" render={redirect} />
-                <Route exact={true} path='/dashboard' component={Dashboard} />
-                <Route exact={true} path='/projects/create' component={CreateProject} />
-              </Switch>
-            </Router>
+            <main role="main" className="col-lg-10 offset-lg-1 px-4 pt-0">
+              <Router>
+                <Switch>
+                  {/* Redirect user to endpoint with appended slash */}
+                  <Route exact={true} strict={true} path="/:url*" render={redirect} />
+                  <Route exact={true} path='/dashboard' component={Dashboard} />
+                  <Route exact={true} path='/projects/create' component={CreateProject} />
+                </Switch>
+              </Router>
+            </main>
           </Row>
         </Container>
       </React.Fragment>

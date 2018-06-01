@@ -1,0 +1,16 @@
+h1 {
+  margin: 0;
+  margin-bottom: 1em;
+  padding: 1.25rem 0;
+}
+
+/* Hack to allow background to extend beyond container */
+.title:before {
+  content:"";
+  background-color: #efefef;
+  position: absolute;
+  height: 4.85rem; /* Danger, have to manually match this to h1 size */
+  width: 200vw;
+  left: -50vw;
+  z-index: -1;
+}
