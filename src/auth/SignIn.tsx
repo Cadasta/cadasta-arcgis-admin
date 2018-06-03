@@ -1,17 +1,34 @@
-import * as React from 'react';
-import { RouteComponentProps } from 'react-router';
+import * as React from "react";
+import { RouteComponentProps } from "react-router";
+import { Button, Col } from "reactstrap";
 
-import { startOAuth2Flow } from './utils';
-export default class SignIn extends React.Component<RouteComponentProps<any>, {}> {
+import { Title } from "../shared/styled-components/Title";
+import { startOAuth2Flow } from "./utils";
 
-  public render() {
-    const handleSignIn = () => startOAuth2Flow(this.props.location.state.next);
-    return (
-      <div>
-        {/* TODO: Add nicer title */}
-        <h2>You must be logged in to access <code>{this.props.location.state.next}</code></h2>
-        <button onClick={handleSignIn}>Sign In</button>
+interface Props extends RouteComponentProps<any> {}
+const SignIn = ({location}: Props) => {
+  const next = location.state && location.state.next;
+  return (
+    <div>
+      <Title>Sign In</Title>
+      <div className="text-center">
+        <Col sm="12" md={{ size: 6, offset: 3 }}>
+        <p className="lead">
+          {next ? (
+              <React.Fragment>You must be logged in to access
+                <code>&nbsp;{next}</code>
+              </React.Fragment>
+            ) : (
+              <React.Fragment>Sign in via Cadasta Portal
+            </React.Fragment>
+            )}
+            </p>
+            <Button color="primary" onClick={startOAuth2Flow.bind(null, next)}>
+              Sign In
+            </Button>
+        </Col>
       </div>
-    )
-  }
+    </div>
+  );
 }
+export default SignIn;
