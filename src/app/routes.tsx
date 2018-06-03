@@ -1,4 +1,3 @@
-// tslint:disable:object-literal-sort-keys
 import * as React from "react";
 import { RouteComponentProps } from 'react-router';
 import { Redirect, Route, Switch } from "react-router-dom";
@@ -8,7 +7,7 @@ import { getUserSession, isCompletingLogin } from "../auth/utils";
 import Dashboard from "../dashboard/Dashboard";
 import CreateProject from "../projects/Create";
 
-interface IRoute {
+interface RouteDeclaration {
   path: string;
   component: React.ComponentType;
   exact?: boolean;
@@ -22,7 +21,7 @@ const urls: {[key: string]: string} = {
   CreateProject: "/projects/create",
 }
 
-const routeConfig: IRoute[] = [
+const routeConfig: RouteDeclaration[] = [
   /* TODO: Ensure that random URLs redirect to 404. No auth should be required, naturally. */
   {
     /* Redirect any URL without trailing slash to endpoint with appended slash */
@@ -79,7 +78,7 @@ const LoginRequiredRoute = ({component: Component, ...routeProps}: {component: a
 
 const routes = routeConfig
   .map(
-    ({loginRequired=false, ...props}: IRoute) => {
+    ({loginRequired=false, ...props}: RouteDeclaration) => {
       const Component = loginRequired ? LoginRequiredRoute : Route;
       return (
         <Component

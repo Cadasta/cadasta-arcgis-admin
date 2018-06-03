@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Title } from '../utils/styled-components/Title';
+import { Title } from '../shared/styled-components/Title';
 export default class extends React.Component {
   public render() {
     return (
