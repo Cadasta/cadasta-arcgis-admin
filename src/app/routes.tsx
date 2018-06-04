@@ -51,7 +51,7 @@ const routeConfig: RouteDeclaration[] = [
   }
 ];
 
-export const routeSwitch = (
+export const router = (
   <Switch>
     {routeConfig.map((props: RouteDeclaration) => (
       <GuardedRoute key={props.path} {...props} />

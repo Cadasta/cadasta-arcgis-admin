@@ -3,7 +3,7 @@ import { RouteComponentProps } from "react-router";
 import { Button, Col } from "reactstrap";
 
 import { Title } from "../shared/styled-components/Title";
-import { startOAuth2Flow } from "./utils";
+import { startOAuth2Flow } from "./oauth2";
 
 interface Props extends RouteComponentProps<any> {}
 const SignIn = ({location}: Props) => {

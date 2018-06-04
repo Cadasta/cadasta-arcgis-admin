@@ -6,7 +6,7 @@ import { StoreState } from "../app/reducers";
 import { RouteDeclaration, urls } from "../app/routes";
 import { AuthAction, login, LoginAction } from "./authActions";
 import { Guard } from "./guards";
-import { completeOAuth2Flow, isCompletingLogin } from "./utils";
+import { completeOAuth2Flow, isCompletingLogin } from "./oauth2";
 
 export interface GuardedRouteProps extends RouteDeclaration {
   state: StoreState;
