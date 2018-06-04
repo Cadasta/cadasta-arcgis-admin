@@ -3,8 +3,9 @@ import { Container } from "reactstrap";
 
 import "./Footer.css";
 
-const Footer = (props: {}) => (
-  <footer className="footer">
+interface Props extends React.HTMLAttributes<HTMLElement> { }
+const Footer = ({ className = "" }: Props) => (
+  <footer className={`footer ${className}`}>
     <Container>
       <small className="align-right text-black-50">
         Copyright 2018 Cadasta, All Rights Reserved.

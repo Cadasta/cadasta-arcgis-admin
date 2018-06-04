@@ -13,12 +13,12 @@ class App extends React.Component {
     return (
       <React.Fragment>
         <Container>
-          <Header />
+          <Header className="col-lg-10 offset-lg-1 px-4 pt-0" />
           <main role="main" className="col-lg-10 offset-lg-1 px-4 pt-0">
             {routeSwitch}
           </main>
         </Container>
-        <Footer />
+        <Footer className="col-lg-10 offset-lg-1" />
       </React.Fragment>
     );
   }
