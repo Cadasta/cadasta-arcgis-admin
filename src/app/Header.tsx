@@ -17,7 +17,7 @@ export interface Props extends React.HTMLAttributes<HTMLElement> {
   logout: () => LogoutAction;
 }
 const Header = ({ className = "", isLoggedIn, username, logout }: Props) => (
-  <Navbar light className={`flex-md-nowrap p-0 ${className}`}>
+  <Navbar light className={`p-0 ${className}`}>
     <NavbarBrand color="light" href="/">
       <img src={logo} className="cadasta-logo" alt="logo" />
     </NavbarBrand>

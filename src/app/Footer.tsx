@@ -1,16 +1,13 @@
 import * as React from "react";
-import { Container } from "reactstrap";
 
 import "./Footer.css";
 
-interface Props extends React.HTMLAttributes<HTMLElement> { }
+interface Props extends React.HTMLAttributes<HTMLElement> {}
 const Footer = ({ className = "" }: Props) => (
-  <footer className={`footer ${className}`}>
-    <Container>
-      <small className="align-right text-black-50">
-        Copyright 2018 Cadasta, All Rights Reserved.
-      </small>
-    </Container>
+  <footer className={`footer pt-2 pb-2 ${className}`}>
+    <small className="text-black-50">
+      Copyright 2018 Cadasta, All Rights Reserved.
+    </small>
   </footer>
 );
 export default Footer;
