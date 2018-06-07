@@ -5,9 +5,11 @@ import GuardedRoute from "../auth/GuardedRoute";
 import { Guard, guards } from "../auth/guards";
 import SignIn from "../auth/SignIn";
 import Dashboard from "../dashboard/Dashboard";
+import Home from "../home/Home";
 import CreateProject from "../projects/Create";
 
 export const urls: { [key: string]: string } = {
+  Home: "/",
   SignIn: "/auth/sign-in",
   Dashboard: "/dashboard",
   CreateProject: "/projects/create"
@@ -36,6 +38,11 @@ const routeConfig: RouteDeclaration[] = [
     path: urls.SignIn,
     component: SignIn,
     exact: true
+  },
+  {
+    path: urls.Home,
+    component: Home,
+    exact: true,
   },
   {
     path: urls.Dashboard,
