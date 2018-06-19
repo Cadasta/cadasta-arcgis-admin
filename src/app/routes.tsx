@@ -6,11 +6,13 @@ import { Guard, guards } from "../auth/guards";
 import SignIn from "../auth/SignIn";
 import Home from "../home/Home";
 import CreateProject from "../projects/Create";
+import NoMatch from "./NoMatch";
 
 export const urls: { [key: string]: string } = {
   Home: "/",
   SignIn: "/auth/sign-in",
-  CreateProject: "/projects/create"
+  CreateProject: "/projects/create",
+  NoMatch: "nomatch"
 };
 
 export interface RouteDeclaration extends RouteProps {
@@ -47,6 +49,9 @@ const routeConfig: RouteDeclaration[] = [
     component: CreateProject,
     exact: true,
     checks: [guards.isLoggedIn]
+  }, 
+  { 
+    component: NoMatch
   }
 ];
 
