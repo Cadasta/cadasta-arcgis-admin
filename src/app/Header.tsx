@@ -24,7 +24,7 @@ const Header = ({ className = "", isLoggedIn, username, logout }: Props) => (
     <div className="justify-content-end">
       {username && <small className="text-monospace"> {username} </small>}
       {isLoggedIn && (
-        <Button outline color="primary" size="sm" onClick={logout}>
+        <Button outline color="secondary" size="sm" onClick={logout}>
           Logout
         </Button>
       )}

@@ -32,12 +32,14 @@ class Create extends React.Component<Props, State> {
         <Title>Create Project</Title>
         <Form onSubmit={this.createProject}>
           <FormGroup row>
-            <Label for="projectName">Project Name</Label>
-            <Col sm={10}>
+            <Col sm={3}>
+              <Label className="col-form-label" for="projectName">Project Name</Label>
+            </Col>
+            <Col sm={9}>
               <Input id="projectName" required value={this.state.projectName} onChange={this.handleName} />
             </Col>
           </FormGroup>
-          <Button>Submit</Button>
+          <Button color="primary">Submit</Button>
         </Form>
         {
           this.state.apiResponse &&
