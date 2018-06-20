@@ -49,16 +49,16 @@ const routeConfig: RouteDeclaration[] = [
     component: CreateProject,
     exact: true,
     checks: [guards.isLoggedIn]
-  }, 
-  { 
+  },
+  {
     component: NoMatch
   }
 ];
 
 export const router = (
   <Switch>
-    {routeConfig.map((props: RouteDeclaration) => (
-      <GuardedRoute key={props.path} {...props} />
+    {routeConfig.map((props: RouteDeclaration, i: number) => (
+      <GuardedRoute key={i} {...props} />
     ))}
   </Switch>
 );
