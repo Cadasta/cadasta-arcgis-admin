@@ -24,7 +24,7 @@
 
 **Style Rules**
 
-- Files containing a Container and/or Component should always export their Container or Component (if no Container is available) as `default` _(Note: this [is contentious](https://basarat.gitbooks.io/typescript/docs/tips/defaultIsBad.html) and should possibly be changed in the future)_. Files that do not export a Container or Component should have no `default` export. A file should never export more than one Container or Component.
+- Files containing a Container and/or Component should always export their Container or Component (if no Container is available) as `default` _(Note: this [is contentious](https://basarat.gitbooks.io/typescript/docs/tips/defaultIsBad.html) and may change in the future)_. Files that do not export a Container or Component should have no `default` export. A file should never export more than one Container or Component.
 - Filenames for files exporting a Container or Component should be uppercased. Any supporting file (e.g. `css` or `.spec.ts` files should also be uppercase). Filenames for files that do not export a Container or Component should be lowercased.
 - Test files should have filenames that mirror the files they are testing, but end with `.spec.ts`
 
