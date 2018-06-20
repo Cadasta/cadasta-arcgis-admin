@@ -1,6 +1,7 @@
 import * as React from "react";
 import { connect, Dispatch } from "react-redux";
-import { Button, Navbar, NavbarBrand } from "reactstrap";
+import { Link } from "react-router-dom";
+import { Button, Navbar } from "reactstrap";
 
 import {
   AuthAction,
@@ -18,9 +19,11 @@ export interface Props extends React.HTMLAttributes<HTMLElement> {
 }
 const Header = ({ className = "", isLoggedIn, username, logout }: Props) => (
   <Navbar light className={`p-0 ${className}`}>
-    <NavbarBrand color="light" href="/">
-      <img src={logo} className="cadasta-logo" alt="logo" />
-    </NavbarBrand>
+    <Link to="/">
+      <div className="navbar-brand">
+        <img src={logo} className="cadasta-logo" alt="logo" />
+      </div>
+    </Link>
     <div className="justify-content-end">
       {username && <small className="text-monospace"> {username} </small>}
       {isLoggedIn && (
