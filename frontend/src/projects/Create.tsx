@@ -1,7 +1,8 @@
 import * as React from "react";
+import { Checkbox, CheckboxGroup } from "react-checkbox-group";
 import { connect, DispatchProp } from "react-redux";
 import { RouteProps } from "react-router-dom";
-import { Button, Col, Form, FormGroup, Input, Label } from "reactstrap";
+import { Button, Col, Form, FormGroup, FormText, Input, Label } from "reactstrap";
 
 import { StoreState } from "../app/reducers";
 import { ADMIN_API_PROJECT_URL } from "../config";
@@ -13,6 +14,7 @@ interface Props extends RouteProps, DispatchProp {
 interface State {
   projectName: string;
   apiResponse?: object;
+  projectGroups: string[];
   err: boolean;
 }
 class Create extends React.Component<Props, State> {
@@ -20,10 +22,12 @@ class Create extends React.Component<Props, State> {
     super(props)
     this.state = {
       projectName: '',
-      err: false,
+      projectGroups: ['PM','FS','DC','VW'],
+      err: false
     };
     this.createProject = this.createProject.bind(this);
     this.handleName = this.handleName.bind(this);
+    this.handleGroups = this.handleGroups.bind(this);
   }
 
   public render() {
@@ -32,14 +36,47 @@ class Create extends React.Component<Props, State> {
         <PageHeader>Create Project</PageHeader>
         <Form onSubmit={this.createProject}>
           <FormGroup row>
-            <Col sm={3}>
-              <Label className="col-form-label" for="projectName">Project Name</Label>
-            </Col>
+            <Label for="projectName" sm={3}>Project name</Label>
             <Col sm={9}>
               <Input id="projectName" required value={this.state.projectName} onChange={this.handleName} />
             </Col>
           </FormGroup>
-          <Button color="primary">Submit</Button>
+          <FormGroup row>
+            <Label sm={3}>Groups</Label>
+            <Col sm={9}>
+              <CheckboxGroup className="checkboxgroup" checkboxDepth={2} name="projectGroups" value={this.state.projectGroups} onChange={this.handleGroups}>
+                <Label check>
+                  <Checkbox value="PM" /> Project Managers
+                    <FormText color="muted" className="pb-3">
+                      Group responsible for all aspects of the project
+                    </FormText>
+                </Label>
+                <Label check>
+                  <Checkbox value="FS"/> Supervisors
+                    <FormText color="muted" className="pb-3">
+                      Group responsible for managing all field operations
+                    </FormText>
+                </Label>
+                <Label check>
+                  <Checkbox value="DC"/> Data Collectors
+                    <FormText color="muted" className="pb-3">
+                      Group responsible for data collection in the field
+                    </FormText>
+                </Label>
+                <Label check>
+                  <Checkbox value="VW"/> Viewers
+                    <FormText color="muted" className="pb-3">
+                      Group with read-only permissions
+                    </FormText>
+                </Label>
+              </CheckboxGroup>
+            </Col>
+          </FormGroup>
+          <FormGroup row>
+            <Col sm={{ size: 9, offset: 3 }}>
+              <Button color="primary">Submit</Button>{' '}
+            </Col>
+          </FormGroup>
         </Form>
         {
           this.state.apiResponse &&
@@ -52,7 +89,16 @@ class Create extends React.Component<Props, State> {
   }
 
   private handleName(event:React.FormEvent<HTMLInputElement>) {
-    this.setState({projectName: event.currentTarget.value});
+    this.setState({
+      projectName: event.currentTarget.value
+    });
+  }
+
+  private handleGroups = (newProjectGroups:string[]) => {
+    alert('New groups selected: ' + newProjectGroups);
+    this.setState({
+      projectGroups: newProjectGroups
+    });
   }
 
   private createProject(event:React.FormEvent<HTMLFormElement>) {
@@ -66,6 +112,7 @@ class Create extends React.Component<Props, State> {
       },
       body: JSON.stringify({
         name: this.state.projectName,
+        groups: this.state.projectGroups
       })
     };
     fetch(ADMIN_API_PROJECT_URL, options)
