@@ -1,4 +1,4 @@
-import { AuthAction, LOGIN, LOGOUT } from './authActions';
+import { AuthAction, LOGIN, LOGOUT } from "./authActions";
 
 export interface AuthState {
   clientId: string;

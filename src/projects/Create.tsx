@@ -1,11 +1,12 @@
-import * as React from 'react';
+import * as React from "react";
 import { connect, DispatchProp } from "react-redux";
 import { RouteProps } from "react-router-dom";
-import { Button, Col, Form, FormGroup, Input, Label } from 'reactstrap';
+import { Button, Col, Form, FormGroup, Input, Label } from "reactstrap";
 
+import { Helmet } from "react-helmet";
 import { StoreState } from "../app/reducers";
-import { ADMIN_API_PROJECT_URL } from '../config';
-import { Title } from '../shared/styled-components/Title';
+import { ADMIN_API_PROJECT_URL } from "../config";
+import { PageHeader } from "../shared/styled-components/PageHeader";
 
 interface Props extends RouteProps, DispatchProp {
   token: string;
@@ -29,7 +30,10 @@ class Create extends React.Component<Props, State> {
   public render() {
     return (
       <React.Fragment>
-        <Title>Create Project</Title>
+        <Helmet>
+          <title>Create a New Project | Cadasta</title>
+        </Helmet>
+        <PageHeader>Create Project</PageHeader>
         <Form onSubmit={this.createProject}>
           <FormGroup row>
             <Col sm={3}>

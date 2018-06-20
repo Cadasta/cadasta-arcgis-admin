@@ -5,7 +5,7 @@ h1 {
 }
 
 /* Hack to allow background to extend beyond container */
-.title:before {
+.page-header:before {
   content:"";
   background-color: #efefef;
   position: absolute;
