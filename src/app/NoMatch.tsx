@@ -1,7 +1,8 @@
 import * as React from "react";
 import Helmet from "react-helmet";
+import { RouteProps } from "react-router-dom";
 
-const NoMatch = ({location}: {location: any}) => (
+const NoMatch: React.SFC<RouteProps> = ({location}) => (
   <div className="text-center">
     <Helmet>
       <title>Page Not Found | Cadasta</title>

@@ -20,8 +20,8 @@ export const completeOAuth2Flow = () =>
     redirectUri: window.location.origin
   }).serialize()
 
-export const isCompletingLogin = () => {
-  return window.location.href.match(
+export const isCompletingLogin = (): boolean => {
+  return !!window.location.href.match(
     /access_token=(.+)&expires_in=(.+)&username=([^&]+)/
   );
 };

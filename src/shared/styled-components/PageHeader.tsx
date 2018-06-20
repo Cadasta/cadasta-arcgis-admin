@@ -1,14 +1,8 @@
 import * as React from "react";
 import "./PageHeader.css"
-// import styled from "styled-components";
 
-// const PageHeaderDiv = styled.div`
-// `
-
-export const PageHeader = ({children}: {children: any}) => (
+export const PageHeader: React.SFC = ({children}) => (
   <div className="page-header">
-    <h1>
-      {children}
-    </h1>
+    <h1>{children}</h1>
   </div>
 );

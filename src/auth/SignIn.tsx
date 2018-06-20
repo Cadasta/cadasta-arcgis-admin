@@ -7,7 +7,7 @@ import { PageHeader } from "../shared/styled-components/PageHeader";
 import { startOAuth2Flow } from "./oauth2";
 
 interface Props extends RouteComponentProps<any> {}
-const SignIn = ({location}: Props) => {
+const SignIn: React.SFC<Props> = ({location}) => {
   const next = location.state && location.state.next;
   return (
     <div>

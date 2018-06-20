@@ -6,7 +6,7 @@ import { urls } from "../app/routes";
 import { PageHeader } from "../shared/styled-components/PageHeader";
 
 interface Props extends React.HTMLAttributes<HTMLElement> {}
-export default ({ className = "" }: Props) => ( 
+const Home: React.SFC<Props> = ({ className = "" }) => (
   <div>
     <Helmet>
       <title>Dashboard | Cadasta</title>
@@ -22,3 +22,4 @@ export default ({ className = "" }: Props) => (
     </ul>
   </div>
 );
+export default Home;

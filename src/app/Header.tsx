@@ -17,7 +17,7 @@ export interface Props extends React.HTMLAttributes<HTMLElement> {
   username: string;
   logout: () => LogoutAction;
 }
-const Header = ({ className = "", isLoggedIn, username, logout }: Props) => (
+const Header: React.SFC<Props> = ({ className = "", isLoggedIn, username, logout }) => (
   <Navbar light className={`p-0 ${className}`}>
     <Link to="/">
       <div className="navbar-brand">
