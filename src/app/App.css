@@ -1,24 +1,64 @@
+:root {
+  --cadasta-blue: #2e51a3;
+  --cadasta-blue-dark: #0e305e;
+  --cadasta-green: #00b288;
+  --cadasta-green-dark: #009975;
+  --primary: #00b288;
+}
+
 body {
   font-size: .875rem;
-  color: #333;
+  color: #595a5c;
   overflow-x: hidden;
+}
+
+a {
+  color: var(--cadasta-blue);
+}
+
+a:hover {
+  color: var(--cadasta-blue-dark);
 }
 
 h1 {
   font-size: 2rem;
+  font-family: 'Roboto Condensed', sans-serif;
+  color: var(--cadasta-blue-dark);
 }
+
 h2 {
   font-size: 1.75rem;
 }
+
 h3 {
   font-size: 1.5rem;
 }
+
 h4 {
   font-size: 1.3rem;
 }
+
 h5 {
   font-size: 1.15rem;
 }
+
 h6 {
   font-size: 1rem;
 }
+
+.btn-primary {
+  background-color: var(--primary);
+  border-color: var(--cadasta-green-dark);
+}
+
+.btn-primary:hover {
+  background-color: var(--cadasta-green-dark);
+  border-color: var(--cadasta-green-dark);
+}
+
+.btn-primary:focus, 
+.btn-primary.focus {
+  -webkit-boxshadow: 0 0 0 0.2rem rgba(0, 153, 117, 0.5);
+  box-shadow: 0 0 0 0.2rem rgba(0, 153, 117, 0.5);
+}
+
