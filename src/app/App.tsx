@@ -1,9 +1,9 @@
 import * as React from "react";
+import Helmet from "react-helmet";
 import { Container } from "reactstrap";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 
-import Helmet from "react-helmet";
 import "./App.css";
 import Footer from "./Footer";
 import Header from "./Header";

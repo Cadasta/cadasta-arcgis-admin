@@ -12,13 +12,13 @@ export interface GuardedRouteProps extends RouteDeclaration {
   state: StoreState;
   loginUser: (session: string) => LoginAction;
 }
-const GuardedRoute = ({
+const GuardedRoute: React.SFC<GuardedRouteProps> = ({
   component,
   checks = [],
   state,
   loginUser,
   ...rest
-}: GuardedRouteProps) => {
+}) => {
   // Analyze URL for OAuth2 credentials. If so, log user in and redirect to same view. Redirecting
   // ensures that the `state` object is updated with the now-logged-in details.
   if (isCompletingLogin()) {
