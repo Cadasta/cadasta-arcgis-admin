@@ -13,9 +13,10 @@ class App extends React.Component {
   public render() {
     return (
       <React.Fragment>
-        <Helmet>
-          <title>Cadasta</title>
-        </Helmet>
+        <Helmet
+          defaultTitle="Welcome"
+          titleTemplate="%s | Cadasta"
+        />
         <Container>
           <div className="col-lg-8 offset-lg-2 px-4 pt-0 position-static">
             <Header />

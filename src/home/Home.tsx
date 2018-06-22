@@ -1,16 +1,12 @@
 import * as React from "react";
 import { Link } from "react-router-dom";
 
-import { Helmet } from "react-helmet";
 import { urls } from "../app/routes";
 import { PageHeader } from "../shared/styled-components/PageHeader";
 
 interface Props extends React.HTMLAttributes<HTMLElement> {}
 const Home: React.SFC<Props> = ({ className = "" }) => (
   <div>
-    <Helmet>
-      <title>Dashboard | Cadasta</title>
-    </Helmet>
     <PageHeader>Dashboard</PageHeader>
     <ul>
       <li>

@@ -3,7 +3,6 @@ import { connect, DispatchProp } from "react-redux";
 import { RouteProps } from "react-router-dom";
 import { Button, Col, Form, FormGroup, Input, Label } from "reactstrap";
 
-import { Helmet } from "react-helmet";
 import { StoreState } from "../app/reducers";
 import { ADMIN_API_PROJECT_URL } from "../config";
 import { PageHeader } from "../shared/styled-components/PageHeader";
@@ -30,9 +29,6 @@ class Create extends React.Component<Props, State> {
   public render() {
     return (
       <React.Fragment>
-        <Helmet>
-          <title>Create a New Project | Cadasta</title>
-        </Helmet>
         <PageHeader>Create Project</PageHeader>
         <Form onSubmit={this.createProject}>
           <FormGroup row>

@@ -1,14 +1,14 @@
 import * as React from "react";
-import Helmet from "react-helmet";
 import { RouteProps } from "react-router-dom";
+import { PageHeader } from "../shared/styled-components/PageHeader";
 
 const NoMatch: React.SFC<RouteProps> = ({location}) => (
-  <div className="text-center">
-    <Helmet>
-      <title>Page Not Found | Cadasta</title>
-    </Helmet>
-    <h1 className="display-1 mb-0">404</h1>
-    <h4>Sorry, but the page you are looking for doesn't exist.</h4>
+  <div>
+    <PageHeader>Page Not Found</PageHeader>
+    <div className="text-center">
+      <h2 className="display-1">404</h2>
+      <h4>Sorry, but the page you are looking for doesn't exist.</h4>
+    </div>
   </div>
 );
 
