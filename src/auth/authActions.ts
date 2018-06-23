@@ -1,4 +1,4 @@
-import { AuthState } from './authReducer';
+import { AuthState } from "./authReducer";
 
 // Login
 export const LOGIN = "LOGIN";
