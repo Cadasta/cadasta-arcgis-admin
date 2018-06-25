@@ -1,0 +1,219 @@
+# https://github.com/awslabs/serverless-application-model/blob/develop/versions/2016-10-31.md
+AWSTemplateFormatVersion: 2010-09-09
+Transform: AWS::Serverless-2016-10-31
+Description: An API to handle the management of our ArcGIS Enterprise Portal.
+
+Parameters:
+  Stage:
+    Type: String
+
+Globals:
+  Api:
+    # enable CORS; to make more specific, change the origin wildcard
+    # to a particular domain name, e.g. "'www.example.com'"
+    Cors:
+      AllowMethods: "'*'"
+      AllowHeaders: "'*'"
+      AllowOrigin: "'*'"
+
+Resources:
+
+  # API
+  # ---
+  AdminApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName:
+        Fn::Sub: ${Stage}
+
+      DefinitionBody: # https://swagger.io/specification/
+        swagger: 2.0
+        info:
+          title:
+            Ref: AWS::StackName
+          description: My API that uses custom authorizer
+          version: 1.0.0
+        schemes:
+        - https
+        basePath: /v1
+        produces:
+        - application/json
+
+        paths:
+          /hello:
+            summary: A test endpoint
+            get:
+              x-amazon-apigateway-integration:
+                httpMethod: POST
+                type: aws_proxy
+                uri:
+                  Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Hello.Arn}/invocations
+              responses: {}
+              security:
+                - CustomAuthorizer: []
+
+          /projects:
+            post:
+              summary: Create a new Projects
+              requestBody:
+                required: true
+                content:
+                  application/json:
+                    schema:
+                      $ref: '#/definitions/ProjectCreateRequestBodyModel'
+              x-amazon-apigateway-request-validator: all
+              parameters:
+              - in: body
+                name: ProjectCreateRequestBodyModel
+                required: true
+                schema:
+                  $ref: '#/definitions/ProjectCreateRequestBodyModel'
+              x-amazon-apigateway-integration:
+                httpMethod: POST
+                type: aws_proxy
+                uri:
+                  Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${ProjectsCreate.Arn}/invocations
+              responses: {}
+              security:
+                - CustomAuthorizer: []
+
+        definitions:
+          ProjectCreateRequestBodyModel:
+            type: object
+            properties:
+              id:
+                type: string
+                format: uuicd
+                # readOnly: true
+              name:
+                type: string
+            required:
+              - name
+
+        x-amazon-apigateway-request-validators:
+          all:
+            validateRequestBody: true
+            validateRequestParameters: true
+          params-only:
+            validateRequestBody: false
+            validateRequestParameters: true
+
+        x-amazon-apigateway-request-validator: params-only
+
+        securityDefinitions:
+          CustomAuthorizer:
+            type: apiKey
+            name: Authorization
+            in: header
+            x-amazon-apigateway-authtype: custom
+            x-amazon-apigateway-authorizer:
+              type: token
+              authorizerUri:
+                Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${ArcGisAuthorizer.Arn}/invocations
+              authorizerCredentials:
+                Fn::Sub: ${ApiGatewayAuthorizerRole.Arn}
+              authorizerResultTtlInSeconds: 600  # How long to cache the authorization
+
+  # Functions
+  # ---
+  Hello:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: hello.default
+      Runtime: nodejs8.10
+      CodeUri: ./dist
+      Timeout: 5
+      Policies:
+        - AWSLambdaBasicExecutionRole
+      Events:
+        GetApi:
+          Type: Api
+          Properties:
+            Path: /hello
+            Method: GET
+            RestApiId:
+                Ref: AdminApi
+
+  ProjectsCreate:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: projects/create.default
+      Runtime: nodejs8.10
+      CodeUri: ./dist
+      Timeout: 5
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - AmazonDynamoDBFullAccess
+      Environment:
+        Variables:
+          TABLE_NAME:
+            Ref: ProjectTable
+      Events:
+        GetApi:
+          Type: Api
+          Properties:
+            Path: /projects
+            Method: POST
+            RestApiId:
+              Ref: AdminApi
+
+  ArcGisAuthorizer:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: authorizer.default
+      Runtime: nodejs8.10
+      CodeUri: ./dist
+      Timeout: 5
+      Environment:
+        Variables:
+          ARCGIS_PORTAL_URL: https://maps.cadasta.org/arcgis/sharing
+      Policies:
+        - AWSLambdaBasicExecutionRole
+
+  # Table
+  # ---
+  ProjectTable:
+    Type: AWS::Serverless::SimpleTable
+    Properties:
+      PrimaryKey:
+        Name: id
+        Type: String
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+
+  # Roles
+  # ---
+  ApiGatewayAuthorizerRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          -
+            Effect: Allow
+            Principal:
+              Service:
+                - apigateway.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Policies:
+        -
+          PolicyName: InvokeAuthorizerFunction
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              -
+                Effect: Allow
+                Action:
+                  - lambda:InvokeAsync
+                  - lambda:InvokeFunction
+                Resource:
+                  Fn::Sub: ${ArcGisAuthorizer.Arn}
+
+Outputs:
+  ApiURL:
+    Description: API endpoint URL for Prod environment
+    Value:
+      Fn::Sub: https://${AdminApi}.execute-api.${AWS::Region}.amazonaws.com/${Stage}/hello
+
