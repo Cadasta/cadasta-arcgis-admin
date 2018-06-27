@@ -168,4 +168,6 @@ Outputs:
     Description: URL for website hosted on S3
   DistributionId:
     Value: !Ref CloudFront
+  WebsiteBucket:
+    Value: !Ref WebsiteBucket
 

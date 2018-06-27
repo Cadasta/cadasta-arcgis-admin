@@ -24,9 +24,14 @@ stages:
 jobs:
   include:
     - stage: deploy to staging
-      script: echo "TODO Deploy code to S3"
       env: DIR='./frontend'
+      script:
+        - pip install --user awscli
+        - npm run deploy-stack
+        - npm run build
+        - npm run deploy
+        - npm run invalidate-cache
     - stage: deploy to staging
-      script: echo "TODO Deploy code to CloudFormation"
       env: DIR='./api'
+      script: echo "TODO Deploy code to CloudFormation"
 
