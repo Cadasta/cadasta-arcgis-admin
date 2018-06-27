@@ -139,6 +139,13 @@ Resources:
       Policies:
         - AWSLambdaBasicExecutionRole
         - AmazonDynamoDBFullAccess
+        - Version: 2012-10-17
+          Statement:
+            - Effect: Allow
+              Action:
+                - sdb:*
+              Resource:
+                Fn::Sub: arn:aws:sdb:${AWS::Region}:${AWS::AccountId}:domain/${ProjectTable}
       Environment:
         Variables:
           TABLE_NAME:
@@ -168,14 +175,7 @@ Resources:
   # Table
   # ---
   ProjectTable:
-    Type: AWS::Serverless::SimpleTable
-    Properties:
-      PrimaryKey:
-        Name: id
-        Type: String
-      ProvisionedThroughput:
-        ReadCapacityUnits: 1
-        WriteCapacityUnits: 1
+    Type: AWS::SDB::Domain
 
   # Roles
   # ---
