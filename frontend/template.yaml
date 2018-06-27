@@ -1,0 +1,171 @@
+# Based on https://github.com/rogerchi/cloudformation-s3-website-ssl-with-redirect/blob/master/cloudformation-s3-website-ssl-with-redirect.yaml
+# TODO:
+# Prevent stack deletion
+---
+AWSTemplateFormatVersion: 2010-09-09
+Description: S3 bucket for website
+
+Parameters:
+  DomainName:
+    Description: Domain name for your website (e.g. cadasta.org)
+    Type: String
+    Default: cadasta.org
+  Stage:
+    Description: Stage of deployment. Enter dev, stg, or prod. Default is dev.
+    Type: String
+    Default: dev
+    AllowedValues:
+      - dev
+      - stg
+      - prod
+  SSLCert:
+    Description: ACM SSL Certificate
+    Type: String
+    Default: arn:aws:acm:us-east-1:910612869735:certificate/b6f4b44f-8d2a-4183-adab-7819d26e21e1 # *.cadasta.org
+
+Mappings:
+  StageDetails:
+    dev:
+      Subdomain: admin-dev
+    stg:
+      Subdomain: admin-stg
+    prod:
+      Subdomain: admin
+  RegionMap:
+    us-east-1:
+      S3hostedzoneID: Z3AQBSTGFYJSTF
+      WebsiteEndpoint: s3-website-us-east-1.amazonaws.com
+    us-west-1:
+      S3hostedzoneID: Z2F56UZL2M1ACD
+      WebsiteEndpoint: s3-website-us-west-1.amazonaws.com
+    us-west-2:
+      S3hostedzoneID: Z3BJ6K6RIION7M
+      WebsiteEndpoint: s3-website-us-west-2.amazonaws.com
+    eu-west-1:
+      S3hostedzoneID: Z1BKCTXD74EZPE
+      WebsiteEndpoint: s3-website-eu-west-1.amazonaws.com
+    ap-southeast-1:
+      S3hostedzoneID: Z3O0J2DXBE1FTB
+      WebsiteEndpoint: s3-website-ap-southeast-1.amazonaws.com
+    ap-southeast-2:
+      S3hostedzoneID: Z1WCIGYICN2BYD
+      WebsiteEndpoint: s3-website-ap-southeast-2.amazonaws.com
+    ap-northeast-1:
+      S3hostedzoneID: Z2M4EHUR26P7ZW
+      WebsiteEndpoint: s3-website-ap-northeast-1.amazonaws.com
+    sa-east-1:
+      S3hostedzoneID: Z31GFT0UA1I2HV
+      WebsiteEndpoint: s3-website-sa-east-1.amazonaws.com
+
+Resources:
+  WebsiteBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub
+        - cadasta-arcgis-admin-${Stage}
+        - Stage: !Ref Stage
+      AccessControl: PublicRead
+      WebsiteConfiguration:
+        IndexDocument: index.html
+        ErrorDocument: index.html
+
+  BucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      PolicyDocument:
+        Id: MyPolicy
+        Version: 2012-10-17
+        Statement:
+          - Sid: PublicReadForGetBucketObjects
+            Effect: Allow
+            Principal: '*'
+            Action: s3:GetObject
+            Resource: !Sub arn:aws:s3:::${WebsiteBucket}/*
+      Bucket: !Ref WebsiteBucket
+
+  LogBucket:
+    Type: "AWS::S3::Bucket"
+    Properties:
+      BucketName: !Sub # TODO: Couldn't this just be "!Sub ${WebsiteBucket}-logs"?
+        - ${BucketName}-logs
+        - BucketName: !Ref WebsiteBucket
+
+  CloudFront:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Origins:
+        - DomainName: !Sub
+          - ${WebsiteBucket}.${S3WebEndpoint}
+          - WebsiteBucket: !Ref WebsiteBucket
+            S3WebEndpoint: !FindInMap [RegionMap, !Ref "AWS::Region", WebsiteEndpoint]
+          Id: !Ref DomainName
+          CustomOriginConfig:
+            OriginProtocolPolicy: http-only
+        Enabled: 'true'
+        Comment: !Sub
+          - Distribution for ${URL}
+          - URL: !Sub
+            - ${subdomain}.${domain}
+            - subdomain: !FindInMap [ StageDetails, !Ref Stage, Subdomain]
+              domain: !Ref DomainName
+        HttpVersion: http2
+        Logging:
+          IncludeCookies: 'false'
+          Bucket: !Sub ${LogBucket}.s3.amazonaws.com
+          Prefix: !Ref DomainName
+        Aliases:
+        - !Sub www.${DomainName}
+        DefaultCacheBehavior:
+          AllowedMethods:
+          - DELETE
+          - GET
+          - HEAD
+          - OPTIONS
+          - PATCH
+          - POST
+          - PUT
+          TargetOriginId: !Ref DomainName
+          Compress: True
+          MinTTL: 300
+          DefaultTTL: 300
+          ForwardedValues:
+            QueryString: 'false'
+            Cookies:
+              Forward: none
+          ViewerProtocolPolicy: redirect-to-https
+        PriceClass: PriceClass_100
+        ViewerCertificate:
+          AcmCertificateArn: !Ref SSLCert
+          SslSupportMethod: sni-only
+
+  # Route53Subdomain:
+  #   Type: AWS::Route53::RecordSetGroup
+  #   Properties:
+  #     HostedZoneName: !Sub
+  #         - ${Domain}.
+  #         - Domain: !Ref DomainName
+  #     Comment: Zone apex alias.
+  #     RecordSets:
+  #     # -
+  #     #   Name: !Ref DomainName
+  #     #   Type: A
+  #     #   AliasTarget:
+  #     #     HostedZoneId: !FindInMap [ RegionMap, !Ref 'AWS::Region', S3hostedzoneID]
+  #     #     DNSName: !FindInMap [ RegionMap, !Ref 'AWS::Region', WebsiteEndpoint]
+  #     - Name: !Sub
+  #           - ${Subdomain}.${Domain}
+  #           - Domain: !Ref DomainName
+  #             Subdomain: !Ref !FindInMap [ StageDetails, !Ref Stage, Subdomain]
+  #       Type: CNAME
+  #       TTL: 900
+  #       ResourceRecords:
+  #       - !GetAtt WWWBucket.DomainName
+
+Outputs:
+  WebsiteURL:
+    Value: !GetAtt WebsiteBucket.WebsiteURL
+    Description: URL for website hosted on S3
+  DistributionId:
+    Value: !Ref CloudFront
+

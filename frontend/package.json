@@ -23,7 +23,13 @@
     "start": "react-scripts-ts start",
     "build": "react-scripts-ts build",
     "test": "react-scripts-ts test --env=jsdom",
-    "eject": "react-scripts-ts eject"
+    "eject": "react-scripts-ts eject",
+    "deploy": "aws s3 sync build/ s3://",
+    "deploy-stack": "aws cloudformation deploy --template-file template.yaml --stack-name $npm_package_name-${STAGE:-dev} --no-fail-on-empty-changeset",
+    "invalidate-cache": "aws cloudfront create-invalidation --distribution-id $(npm run --silent _get-distribution-id) --paths '/*'",
+    "foo": "echo $(npm run _get-distribution-id)",
+    "_describe-stack": "aws cloudformation describe-stacks --stack-name $npm_package_name-${STAGE:-dev}",
+    "_get-distribution-id": "npm run --silent _describe-stack | python -c 'import json,sys;o=json.load(sys.stdin);o=o[\"Stacks\"][0][\"Outputs\"];o=[x for x in o if x[\"OutputKey\"]==\"DistributionId\"];print(o[0][\"OutputValue\"] if o else \"_notfound_\")'"
   },
   "devDependencies": {
     "@types/jest": "^22.2.3",

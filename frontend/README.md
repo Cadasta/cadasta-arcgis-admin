@@ -31,3 +31,9 @@
 ### Dev Tools
 
 * [Redux DevTools Extension](http://extension.remotedev.io/)
+
+### Deployment
+
+#### Stack
+
+The infrastructure for the frontend (e.g. S3 Bucket, CloudFronts distribution) is managed via the CloudFormation template (`template.yaml`).
