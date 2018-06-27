@@ -1,7 +1,7 @@
 import * as React from "react";
 import Helmet from "react-helmet";
-import { Container } from "reactstrap";
 import { BrowserRouter as Router } from "react-router-dom";
+import { Container } from "reactstrap";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 
