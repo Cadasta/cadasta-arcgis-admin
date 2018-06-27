@@ -1,0 +1,32 @@
+language: node_js
+
+node_js:
+  - '8.10'
+
+cache:
+  directories:
+    - api/node_modules
+    - frontend/node_modules
+
+env:
+  matrix:
+    - DIR=./frontend
+    - DIR=./api
+
+before_install:
+  - cd $DIR
+
+stages:
+  - test
+  - name: deploy to staging
+    # if: branch = master
+
+jobs:
+  include:
+    - stage: deploy to staging
+      script: echo "TODO Deploy code to S3"
+      env: DIR='./frontend'
+    - stage: deploy to staging
+      script: echo "TODO Deploy code to CloudFormation"
+      env: DIR='./api'
+

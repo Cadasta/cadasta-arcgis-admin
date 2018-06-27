@@ -1,3 +1,15 @@
+# NodeJS
 node_modules
+dist
 
+# Python
+.venv
+__pycache__/
+
+# Editor
+.vscode
+
+# Litter
 *.log
+template.packaged.yaml
+coverage
