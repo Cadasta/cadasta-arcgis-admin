@@ -148,6 +148,7 @@ Resources:
                 Fn::Sub: arn:aws:sdb:${AWS::Region}:${AWS::AccountId}:domain/${ProjectTable}
       Environment:
         Variables:
+          ARCGIS_PORTAL_URL: https://maps.cadasta.org/arcgis/sharing
           TABLE_NAME:
             Ref: ProjectTable
       Events:

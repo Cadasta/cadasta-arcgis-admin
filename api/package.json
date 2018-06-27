@@ -17,6 +17,8 @@
   "license": "MIT",
   "private": true,
   "dependencies": {
+    "@esri/arcgis-rest-groups": "^1.4.1",
+    "@esri/arcgis-rest-request": "^1.4.1",
     "@types/isomorphic-fetch": "0.0.34",
     "isomorphic-fetch": "^2.2.1",
     "isomorphic-form-data": "^1.0.0",

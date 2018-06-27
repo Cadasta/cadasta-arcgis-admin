@@ -1,5 +1,6 @@
 interface ProjectRequestBody {
   name: string;
+  groups: string[];
 }
 
 interface ProjectResponseBody {
