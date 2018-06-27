@@ -9,7 +9,8 @@
     "build": "NODE_ENV=${NODE_ENV:-production} webpack",
     "package": "sam package --template-file template.yaml --s3-bucket $npm_package_name-${STAGE:-dev} --output-template-file template.packaged.yaml",
     "deploy": "sam deploy --template-file template.packaged.yaml --stack-name $npm_package_name-${STAGE:-dev} --capabilities CAPABILITY_IAM --region us-west-2 --parameter-overrides Stage=${STAGE:-dev}",
-    "clean": "rm -rf -v dist/*"
+    "clean": "rm -rf -v dist/*",
+    "validate-template": "aws cloudformation validate-template --template-body file://template.yaml"
   },
   "repository": {},
   "author": "",

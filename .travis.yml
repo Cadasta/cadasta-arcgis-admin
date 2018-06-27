@@ -1,32 +1,48 @@
 language: node_js
 
 node_js:
-  - '8.10'
+- '8.10'
 
 cache:
   directories:
-    - api/node_modules
-    - frontend/node_modules
+  - api/node_modules
+  - frontend/node_modules
 
 env:
   matrix:
-    - DIR=./frontend
-    - DIR=./api
+  - DIR=./frontend
+  - DIR=./api
+  global:
+    - AWS_DEFAULT_REGION='us-west-2'
+    - secure: iOr55D9pAOEepUUWb14ovsDP1jjCnwkZPSKpFRouAvNt//YjbIKVvn8pgjFP1edmQ3oBEIk8jm50L03fxaVPDrFxAZbIfvnNo7mfiwH2fbSDmto6dsCsUtplaw9/dY7lrTeORLLuSpkIGxuLcTuLsli/oxBh+I5UZzYFS71AQEvTLIyOrqIAoDnsdNFMdbmk/8JBtwQBEpM6DBGihRQ4ozMzWRZb9peP2E5qhaCkjVP5BDb8AYclFLp1zEqezYT952JkIZK7uDMspEP4qjK1f4F9MVAzaRPxSVJr7X7Jb2IF6FWuIe0P3bf6Pm1oOMZABdhJ9D38y6BAlJf0XqY7S2Hh5DngVnHrHyF8Zq9sbg9ZYaqvxQGVEI5F8RyPJHHvC47n1hEA80UNiGlS7cdbxhiby3rQsj7DMib+3WGzVeBaVdLDp8+BPffLn7fZPBj2L9m4Cxlss5H/A/sgaAdlZQBCTNvDvERVdV6MJQ6nrkEih/DErsqQDkiSl/I6IZWSElcx8PNU1a0f0FSerClYecAkIZ3AqGCeHViOepimzHDhfzwlwH2rlLh+N7YHCEPj0XB9TbtD+r/1KAtyBdkfI4TYj+rqljnyb91thjEuBqMCPuDJBz/+TB9YFjLmLrhkDMyT435tM5qD/jburceTejf4+nVv8ULHe/LkhYt8EN0=
+    - secure: SA+xtCT5p/Lwk0VT7rjH0BLNiYfRbmd3E4zrKSIn0ZCi/QyEHb39KhlZm6qfTcrT4G5qnOuKlyybE358yoVlicu+K00OWwTKTuOeRS8FkB235j2gQbjp+hDFkEkQZXcqRr8QCYsY4QGq3WmMr2+2GAuHkXh/3hx/gkEKU0ZaOBg3QcUCzvkMNHQxT8NlgMnBP1Uu7TjfxZS2Q0Gl1y2ZY/bYhQhG4OwsbrvbaCsFzWW9WUO9xZPgqVfl/WZZLJ8kaaoTRo8kPEydymdh8KNPVEy5GmteLy8aUeYMzl46Ap0IcFK4lA5JOQfF1xxkl4IVW/CG5ncUwQOMzC3FDIfGvMVV3FKdDJLrdUYxgU+rSA4dQF6gIWo3ftwRZVBMDHrSIQyqD7+lsTbXzATIpz7V5Ko0HPadMGA5dEWpUtYn6PnjKsMWYoa57kEARY9Tya8054M5rGdyih6IjCfm5t7uSvMk3sdiFd8UbeftlxaUoDQHPH57NTyLRrbLWgi4qJEj4nlM9rYPBqe0N4lkQJeYqQEyRTKhInmMqm/vpL5ZS9S75hOuNz19woES3rtIXpItjA4q6xWqdJQshXj4U7q9rFtAKaWlF+GHnQMNK4ObBvn5R6c/KevpN3Du2DeGrZfN1tR3jp8zHL78CQzfgT0NVLx9S7liDjXRl0uGxrs/V1k=
+
 
 before_install:
-  - cd $DIR
+- cd $DIR
+- pip install --user awscli
+
+script:
+- npm test
+- npm run validate-template
 
 stages:
-  - test
-  - name: deploy to staging
-    # if: branch = master
+- test
+- name: deploy to staging
+  if: branch = master
 
 jobs:
   include:
-    - stage: deploy to staging
-      script: echo "TODO Deploy code to S3"
-      env: DIR='./frontend'
-    - stage: deploy to staging
-      script: echo "TODO Deploy code to CloudFormation"
-      env: DIR='./api'
-
+  - stage: deploy to staging
+    env:
+    - DIR='./frontend'
+    - STAGE='stg'
+    script:
+    - npm run build
+    - npm run deploy
+    - npm run invalidate-cache
+  - stage: deploy to staging
+    env:
+    - DIR='./api'
+    - STAGE='stg'
+    script: echo "TODO Deploy code to CloudFormation"
