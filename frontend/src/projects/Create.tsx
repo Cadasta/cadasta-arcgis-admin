@@ -95,7 +95,6 @@ class Create extends React.Component<Props, State> {
   }
 
   private handleGroups = (newProjectGroups:string[]) => {
-    alert('New groups selected: ' + newProjectGroups);
     this.setState({
       projectGroups: newProjectGroups
     });
