@@ -51,6 +51,10 @@ export const APIGatewayProxyEventFactory = (body: {}, method: string = 'GET'): A
     requestTimeEpoch: 0,
     resourceId: '1',
     resourcePath: '1',
+    authorizer: {
+      user: JSON.stringify(userResponseFactory()),
+      authorization: 'abc123'
+    }
     },
     resource: 'string'
   };

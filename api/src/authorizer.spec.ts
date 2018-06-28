@@ -85,13 +85,16 @@ describe('API Gateway CustomAuthorizer', () => {
     expect(resp.principalId).toBe('MyUser');
   });
 
-  it('should set JSON stringify\'d user at \'user\' key in policy context', async () => {
+  it('should set JSON stringify\'d user at \'user\' key and authorization token in policy context', async () => {
     const user = userResponseFactory({
       role: 'org_admin', disabled: true
     });
     mockFetch.mockResolvedValue(user);
     const resp = await handler(eventBase);
-    expect(resp.context).toEqual({user: await user.text()});
+    expect(resp.context).toEqual({
+      user: await user.text(),
+      authorization: eventBase.authorizationToken
+    });
   });
 
   it('should not catch fetch errors', async () => {
