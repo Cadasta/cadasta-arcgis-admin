@@ -16,35 +16,34 @@ export const userResponseFactory = (userDetails = {}) => responseBodyFactory(
   }
 );
 
-export const APIGatewayProxyEventFactory = (body: {}, method: string = 'GET'): AWSLambda.APIGatewayProxyEvent => {
-  return {
-    body: JSON.stringify(body),
-    headers: {},
+export const APIGatewayProxyEventFactory = (body: {}, method: string = 'GET'): AWSLambda.APIGatewayProxyEvent => ({
+  body: JSON.stringify(body),
+  headers: {},
+  httpMethod: method,
+  isBase64Encoded: false,
+  path: '/projects/',
+  pathParameters: null,
+  queryStringParameters: null,
+  stageVariables: null,
+  requestContext: {
+    accountId: 'oroick',
+    apiId: 'API',
     httpMethod: method,
-    isBase64Encoded: false,
-    path: '/projects/',
-    pathParameters: null,
-    queryStringParameters: null,
-    stageVariables: null,
-    requestContext: {
-      accountId: 'oroick',
-      apiId: 'API',
-      httpMethod: method,
-      identity: {
-        accessKey: null,
-        accountId: null,
-        apiKey: null,
-        apiKeyId: null,
-        caller: null,
-        cognitoAuthenticationProvider: null,
-        cognitoAuthenticationType: null,
-        cognitoIdentityId: null,
-        cognitoIdentityPoolId: null,
-        sourceIp: '127.0.0.1',
-        user: null,
-        userAgent: null,
-        userArn: null,
-      },
+    identity: {
+      accessKey: null,
+      accountId: null,
+      apiKey: null,
+      apiKeyId: null,
+      caller: null,
+      cognitoAuthenticationProvider: null,
+      cognitoAuthenticationType: null,
+      cognitoIdentityId: null,
+      cognitoIdentityPoolId: null,
+      sourceIp: '127.0.0.1',
+      user: null,
+      userAgent: null,
+      userArn: null,
+    },
     path: '/projects/',
     stage: 'test',
     requestId: '1',
@@ -55,7 +54,6 @@ export const APIGatewayProxyEventFactory = (body: {}, method: string = 'GET'): A
       user: JSON.stringify(userResponseFactory()),
       authorization: 'abc123'
     }
-    },
-    resource: 'string'
-  };
-};
+  },
+  resource: 'string'
+});
