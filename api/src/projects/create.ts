@@ -1,5 +1,5 @@
-import { create } from './db';
-import { createGroups } from './groups';
+import { createGroups } from '../lib/arcgis/groups';
+import { create } from '../lib/db/projects';
 
 export default async (event: AWSLambda.APIGatewayProxyEvent): Promise<AWSLambda.APIGatewayProxyResult> => {
   const payload: ProjectRequestBody = JSON.parse(event.body);

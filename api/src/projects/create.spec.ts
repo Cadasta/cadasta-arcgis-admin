@@ -1,10 +1,10 @@
 import { APIGatewayProxyEventFactory } from '../../spec/factories';
+import { createGroups } from '../lib/arcgis/groups';
+import { create } from '../lib/db/projects';
 import handler from './create';
-import { create } from './db';
-import { createGroups } from './groups';
 
-jest.mock('./db');
-jest.mock('./groups');
+jest.mock('../lib/db/projects');
+jest.mock('../lib/arcgis/groups');
 
 describe('Project Create API', () => {
   const mockCreate = create as jest.Mock;
