@@ -114,7 +114,7 @@ Resources:
   Hello:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: hello.default
+      Handler: hello/hello.default
       Runtime: nodejs8.10
       CodeUri: ./dist/hello
       Timeout: 5
@@ -163,7 +163,7 @@ Resources:
   ArcGisAuthorizer:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: authorizer.default
+      Handler: authorizer/authorizer.default
       Runtime: nodejs8.10
       CodeUri: ./dist/authorizer/bar
       Timeout: 5

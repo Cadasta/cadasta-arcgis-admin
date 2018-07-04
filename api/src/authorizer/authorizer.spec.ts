@@ -1,13 +1,13 @@
 import fetch from 'isomorphic-fetch';
 import AWSLambda from 'aws-lambda';
 
-import { userResponseFactory } from '../spec/factories';
+import { userResponseFactory } from '../../spec/factories';
+import handler from './authorizer';
 
 jest.mock('isomorphic-fetch');
 
 describe('API Gateway CustomAuthorizer', () => {
   let _initialEnv: {[key: string]: string};
-  let handler: (event: object) => Promise<AWSLambda.CustomAuthorizerResult>;
   const eventBase: AWSLambda.CustomAuthorizerEvent = {
     authorizationToken: 'abcd12345',
     methodArn: 'example-arn',
@@ -18,7 +18,6 @@ describe('API Gateway CustomAuthorizer', () => {
   beforeEach(() => {
     _initialEnv = process.env;
     process.env.ARCGIS_PORTAL_URL = 'https://mockPortal.com';
-    handler = require('./authorizer').default; // Mock env BEFORE importing module
   });
 
   afterEach(() => {

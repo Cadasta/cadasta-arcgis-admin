@@ -1,26 +1,9 @@
 import AWS from 'aws-sdk';
 import slugify from 'slugify';
 
-function makeParams(name: string, slug: string, username: string, date: string) {
-  return {
-    Attributes: [
-      {Name: 'slug', Value: slug},
-      {Name: 'name', Value: name},
-      {Name: 'created_by', Value: username},
-      {Name: 'modified_by', Value: username},
-      {Name: 'created_date', Value: date},
-      {Name: 'modified_date', Value: date}
-    ],
-    DomainName: process.env.TABLE_NAME,
-    ItemName: slug,
-    Expected: {
-      Exists: false,
-      Name: 'slug'
-    }
-  };
-}
+export async function create(name: string, username: string): Promise<ProjectCreateResponseBody> {
+  const DomainName =  process.env.TABLE_NAME;
 
-export async function create(name: string, username: string): Promise<ProjectResponseBody> {
   const simpledb = new AWS.SimpleDB();
   const slug: string = slugify(name).toLowerCase();
 
@@ -28,12 +11,27 @@ export async function create(name: string, username: string): Promise<ProjectRes
   let count = 0;
 
   while (true) {
-    const now: string = (new Date()).toISOString();
-    const params = makeParams(name, proposedSlug, username, now);
-
+    const now: string = new Date().toISOString();
+    const params = {
+      Attributes: [
+        {Name: 'slug', Value: proposedSlug},
+        {Name: 'name', Value: name},
+        {Name: 'created_by', Value: username},
+        {Name: 'modified_by', Value: username},
+        {Name: 'created_date', Value: now},
+        {Name: 'modified_date', Value: now}
+      ],
+      DomainName,
+      ItemName: proposedSlug,
+      Expected: {
+        Exists: false,
+        Name: 'slug'
+      }
+    };
     try {
-      await simpledb.putAttributes(params).promise();
-
+      console.log(
+        await simpledb.putAttributes(params).promise()
+      );
       return {
         name,
         slug: proposedSlug,
@@ -47,7 +45,7 @@ export async function create(name: string, username: string): Promise<ProjectRes
         count++;
         proposedSlug = slug + '-' + count;
       } else {
-        throw new Error(JSON.stringify(error));
+        throw error;
       }
     }
   }

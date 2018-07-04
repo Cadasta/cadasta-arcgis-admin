@@ -1,4 +1,4 @@
-export interface User {
+interface User {
   modified: number;
   fullName: string;
   appInfo: {
