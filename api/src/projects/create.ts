@@ -12,7 +12,7 @@ export default async (event: AWSLambda.APIGatewayProxyEvent): Promise<AWSLambda.
     const project: ProjectResponseBody = await create(payload.name, user);
     body = JSON.stringify(project);
 
-    await createGroups(payload.groups, project.name, project.slug, user, token);
+    const groupsResult = await createGroups(payload.groups, project.name, project.slug, user, token);
   } catch (error) {
     statusCode = 500;
     body = error.message;
