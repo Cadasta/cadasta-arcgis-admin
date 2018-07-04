@@ -1,9 +1,9 @@
-interface ProjectRequestBody {
+interface ProjectCreateRequestBody {
   name: string;
   groups: string[];
 }
 
-interface ProjectResponseBody {
+interface ProjectCreateResponseBody {
   name: string;
   slug: string;
   created_by: string;
