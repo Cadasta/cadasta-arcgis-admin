@@ -50,7 +50,7 @@ The infrastructure for the frontend (e.g. S3 Bucket, CloudFronts distribution) i
 
 ### CI
 
-Travis automatically tests all PRs via `npm test` and `npm run validate-template`. Code merged into `master` is already built and deployed to the `stg` environment.
+Travis automatically tests all PRs via `npm test` and `npm run validate-template`. Code merged into `master` is automatically built and deployed to the `stg` environment.
 
 ### Recommended Reading
 
