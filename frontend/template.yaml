@@ -111,7 +111,7 @@ Resources:
           - ${Subdomain}.${DomainName}
           - Subdomain: !FindInMap [ StageDetails, !Ref Stage, Subdomain]
         DefaultCacheBehavior:
-          AllowedMethods: # TODO: Should these all be allowed? Why not just GET & HEAD & OPTIONS
+          AllowedMethods:
           - GET
           - HEAD
           - OPTIONS
