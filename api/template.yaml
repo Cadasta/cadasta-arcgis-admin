@@ -23,8 +23,7 @@ Resources:
   AdminApi:
     Type: AWS::Serverless::Api
     Properties:
-      StageName:
-        Fn::Sub: ${Stage}
+      StageName: !Sub ${Stage}
 
       DefinitionBody: # https://swagger.io/specification/
         swagger: 2.0
@@ -46,8 +45,7 @@ Resources:
               x-amazon-apigateway-integration:
                 httpMethod: POST
                 type: aws_proxy
-                uri:
-                  Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Hello.Arn}/invocations
+                uri: !Sub arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Hello.Arn}/invocations
               responses: {}
               security:
                 - CustomAuthorizer: []
@@ -71,8 +69,7 @@ Resources:
               x-amazon-apigateway-integration:
                 httpMethod: POST
                 type: aws_proxy
-                uri:
-                  Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${ProjectsCreate.Arn}/invocations
+                uri: !Sub arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${ProjectsCreate.Arn}/invocations
               responses: {}
               security:
                 - CustomAuthorizer: []
@@ -108,10 +105,8 @@ Resources:
             x-amazon-apigateway-authtype: custom
             x-amazon-apigateway-authorizer:
               type: token
-              authorizerUri:
-                Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${ArcGisAuthorizer.Arn}/invocations
-              authorizerCredentials:
-                Fn::Sub: ${ApiGatewayAuthorizerRole.Arn}
+              authorizerUri: !Sub arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${ArcGisAuthorizer.Arn}/invocations
+              authorizerCredentials: !Sub ${ApiGatewayAuthorizerRole.Arn}
               authorizerResultTtlInSeconds: 600  # How long to cache the authorization
 
   # Functions
@@ -121,7 +116,7 @@ Resources:
     Properties:
       Handler: hello.default
       Runtime: nodejs8.10
-      CodeUri: ./dist
+      CodeUri: ./dist/hello
       Timeout: 5
       Policies:
         - AWSLambdaBasicExecutionRole
@@ -139,7 +134,7 @@ Resources:
     Properties:
       Handler: projects/create.default
       Runtime: nodejs8.10
-      CodeUri: ./dist
+      CodeUri: ./dist/projects
       Timeout: 5
       Policies:
         - AWSLambdaBasicExecutionRole
@@ -162,7 +157,7 @@ Resources:
     Properties:
       Handler: authorizer.default
       Runtime: nodejs8.10
-      CodeUri: ./dist
+      CodeUri: ./dist/authorizer/bar
       Timeout: 5
       Environment:
         Variables:
@@ -208,12 +203,10 @@ Resources:
                 Action:
                   - lambda:InvokeAsync
                   - lambda:InvokeFunction
-                Resource:
-                  Fn::Sub: ${ArcGisAuthorizer.Arn}
+                Resource: !Sub ${ArcGisAuthorizer.Arn}
 
 Outputs:
   ApiURL:
     Description: API endpoint URL for Prod environment
-    Value:
-      Fn::Sub: https://${AdminApi}.execute-api.${AWS::Region}.amazonaws.com/${Stage}/hello
+    Value: !Sub https://${AdminApi}.execute-api.${AWS::Region}.amazonaws.com/${Stage}/hello
 
