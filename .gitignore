@@ -13,3 +13,4 @@ __pycache__/
 *.log
 template.packaged.yaml
 coverage
+build
