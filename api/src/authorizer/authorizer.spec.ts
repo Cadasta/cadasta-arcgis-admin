@@ -17,7 +17,7 @@ describe('API Gateway CustomAuthorizer', () => {
 
   beforeEach(() => {
     _initialEnv = process.env;
-    process.env.ARCGIS_PORTAL_URL = 'https://mockPortal.com';
+    process.env.ARCGIS_REST_URL = 'https://mockPortal.com';
   });
 
   afterEach(() => {

@@ -8,6 +8,10 @@ Parameters:
     Type: String
 
 Globals:
+  Function:
+    Environment:
+      Variables:
+        ARCGIS_REST_URL: https://maps.cadasta.org/arcgis/sharing/rest
   Api:
     # enable CORS; to make more specific, change the origin wildcard
     # to a particular domain name, e.g. "'www.example.com'"
@@ -148,7 +152,6 @@ Resources:
                 Fn::Sub: arn:aws:sdb:${AWS::Region}:${AWS::AccountId}:domain/${ProjectTable}
       Environment:
         Variables:
-          ARCGIS_PORTAL_URL: https://maps.cadasta.org/arcgis/sharing
           TABLE_NAME:
             Ref: ProjectTable
       Events:
@@ -167,9 +170,6 @@ Resources:
       Runtime: nodejs8.10
       CodeUri: ./dist/authorizer/bar
       Timeout: 5
-      Environment:
-        Variables:
-          ARCGIS_PORTAL_URL: https://maps.cadasta.org/arcgis/sharing
       Policies:
         - AWSLambdaBasicExecutionRole
 
