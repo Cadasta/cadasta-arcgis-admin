@@ -5,10 +5,10 @@ type Event = AWSLambda.CustomAuthorizerEvent;
 type Response = AWSLambda.CustomAuthorizerResult;
 
 export default async ({ authorizationToken: Authorization, methodArn: resource }: Event): Promise<Response> => {
-  const URL = `${process.env.ARCGIS_PORTAL_URL}/rest/community/self?f=json`;
+  const SELF_URL = `${process.env.ARCGIS_REST_URL}/community/self?f=json`;
 
   const headers = { Authorization };
-  const response = await fetch(URL, { headers });
+  const response = await fetch(SELF_URL, { headers });
   const user: User = await response.json();
 
   // Currently, we're assuming that an org-admin is permitted to access any resource and
