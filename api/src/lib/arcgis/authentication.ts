@@ -1,11 +1,12 @@
 import { IAuthenticationManager } from '@esri/arcgis-rest-request';
 
-export default class Auth implements IAuthenticationManager {
+export class Auth implements IAuthenticationManager {
   public  portal: string
   private token: string
 
-  constructor(token: string) {
-    this.token = token.substring(7);
+  constructor(portal: string, token: string) {
+    this.portal = portal;
+    this.token = token.startsWith('Bearer ') ? token.split(' ')[1] : token;
   }
 
   public getToken(): Promise<string> {

@@ -1,3 +1,5 @@
+import { AWSError } from 'aws-sdk';
+
 import { APIGatewayProxyEventFactory } from '../../spec/factories';
 import { createGroups } from '../lib/arcgis/groups';
 import { create } from '../lib/db/projects';
@@ -32,13 +34,30 @@ describe('Project Create API', () => {
   });
 
   it('should return server error if DB write fails', async () => {
-    const error = {
-      code: 'SomeError',
-      statusCode: 409
-    };
-    mockCreate.mockRejectedValue(new Error(JSON.stringify(error)));
+    // Example errors: https://docs.aws.amazon.com/AmazonSimpleDB/latest/DeveloperGuide/APIError.html
+    const error: AWSError = Object.assign(new Error(), {
+      message: 'The specified domain does not exist.',
+      code: 'NoSuchDomain',
+      statusCode: 400,
+      retryable: false,
+      time: new Date('2018-01-01'),
+      hostname: '',
+      region: 'us-west-2',
+      retryDelay: 1,
+      requestId: '',
+      extendedRequestId: '',
+      cfId: '',
+    });
+    mockCreate.mockRejectedValue(error);
+    console.log = jest.fn()
+
     const response = await handler(event);
+
     expect(response.statusCode).toEqual(500);
-    expect(JSON.parse(response.body)).toEqual(error);
+    expect(JSON.parse(response.body)).toEqual({
+      err: `[${error.code}] ${error.message}`,
+      msg: 'Failed to create project'
+    });
+    expect(console.log).toHaveBeenCalledWith(error);
   });
 });

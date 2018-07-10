@@ -1,7 +1,7 @@
 import AWS from 'aws-sdk';
 import slugify from 'slugify';
 
-export async function create(name: string, username: string): Promise<ProjectCreateResponseBody> {
+export async function create(name: string, username: string): Promise<Project> {
   const DomainName =  process.env.TABLE_NAME;
 
   const simpledb = new AWS.SimpleDB();

@@ -2,34 +2,33 @@ import { createGroup, IGroup } from '@esri/arcgis-rest-groups';
 import { ArcGISRequestError } from '@esri/arcgis-rest-request';
 import 'isomorphic-fetch';
 import 'isomorphic-form-data';
-import Auth from './authentication';
+import { Auth } from './authentication';
 
-const groupNames: {[key: string]: string} = {
+export interface ParallelOpResult {
+  success: Array<{[key: string]: any}>,
+  failure: ArcGISRequestError[]
+}
+const groupNames: {[K in GroupNameShort]: string} = {
   project_managers: 'Project managers',
   field_supervisors: 'Field supervisors',
   data_collectors: 'Data Collectors',
   viewers: 'Viewers'
 }
 
-interface ParallelOpResult {
-  success: Array<{[key: string]: any}>,
-  failure: ArcGISRequestError[]
-}
-
 export const createGroups = (
-  groups: string[],
+  groupNameKeys: GroupNameShort[],
   projectName: string,
-  slug: string,
+  projectSlug: string,
   owner: string,
-  token: string
+  authentication: Auth
 ): Promise<ParallelOpResult> => (
-  Promise.all(groups
+  Promise.all(groupNameKeys
     // Create ArcGIS request input
     .map(
-      (group: string): IGroup => ({
-        title: `${projectName}: ${groupNames[group]}`,
+      (groupNameKey): IGroup => ({
+        title: `${projectName}: ${groupNames[groupNameKey]}`,
         owner,
-        tags: [`project:${slug}`],
+        tags: [`project:${projectSlug}`],
         access: 'private'
       })
     )
@@ -37,8 +36,7 @@ export const createGroups = (
     .map(
       (group: IGroup) => createGroup({
         group,
-        authentication: new Auth(token),
-        portal: process.env.ARCGIS_PORTAL_URL + '/rest'
+        authentication,
       })
       // Catch errors, return as error object
       .catch((err: ArcGISRequestError) => ({ err, group }))
@@ -46,8 +44,7 @@ export const createGroups = (
   )
   // Combine array of successes and failures into single object
   .then(
-    (responses): ParallelOpResult =>
-    responses.reduce(
+    (responses): ParallelOpResult => responses.reduce(
       (output: ParallelOpResult, result) => ({
         success: output.success.concat(!result.err ? [result] : []),
         failure: output.failure.concat(result.err ? [result] : [])
@@ -55,27 +52,11 @@ export const createGroups = (
       { success: [], failure: [] }
     )
   )
+  // Reject promise if there are any errors
+  .then(
+    (response): ParallelOpResult => {
+      if (response.failure.length) { throw response }
+      return response
+    }
+  )
 );
-  
-// export async function createGroups(groups: string[], projectName: string, slug: string, owner: string, token: string) {
-//   for (const g of groups) {
-//     const groupName: string = groupNames[g];
-//     const group: IGroup = {
-//       title: `${projectName}: ${groupName}`,
-//       owner,
-//       tags: [`project:${slug}`],
-//       access: 'private'
-//     }
-
-//     const authentication: IAuthenticationManager = new Auth(token);
-//     try {
-//       await createGroup({
-//         authentication,
-//         group,
-//         portal: process.env.ARCGIS_PORTAL_URL + '/rest',
-//       });
-//     } catch (e) {
-//       throw new Error(JSON.stringify(e.response));
-//     }
-//   }
-// }
