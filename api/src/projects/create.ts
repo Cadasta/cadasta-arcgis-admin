@@ -1,29 +1,34 @@
-import { createGroups } from '../lib/arcgis/groups';
-import { create } from '../lib/db/projects';
+import * as ArcGisPortal from '../lib/arcgis';
+import * as ProjectsDb from '../lib/db/projects';
+import { buildResponse } from '../lib/utils';
 
 export default async (event: AWSLambda.APIGatewayProxyEvent): Promise<AWSLambda.APIGatewayProxyResult> => {
+  const ARCGIS_REST_URL = process.env.ARCGIS_REST_URL;
+
+  const auth = new ArcGisPortal.Auth(ARCGIS_REST_URL, event.requestContext.authorizer.authorization);
   const payload: ProjectCreateRequestBody = JSON.parse(event.body);
   const user = JSON.parse(event.requestContext.authorizer.user).username;
-  const token = event.requestContext.authorizer.authorization;
 
-  let statusCode: number = 200;
-  let body: string = '';
+  let project: Project;
+  let groups: ArcGisPortal.ParallelOpResult;
   try {
-    const project: ProjectCreateResponseBody = await create(payload.name, user);
-    body = JSON.stringify(project);
-
-    const groupsResult = await createGroups(payload.groups, project.name, project.slug, user, token);
+    project = await ProjectsDb.create(payload.name, user);
   } catch (error) {
-    statusCode = 500;
-    body = error.message;
+    console.log(error);
+    return buildResponse({
+      msg: 'Failed to create project',
+      err: `[${error.code}] ${error.message}`,
+    }, 500);
   }
 
-  return {
-    statusCode,
-    body,
-    headers: {
-      'Content-Type': 'application/json',
-      'Access-Control-Allow-Origin': '*'
-    },
-  };
+  try {
+    const groupsResult = await ArcGisPortal.createGroups(
+      payload.groups, project.name, project.slug, user, auth
+    );
+  } catch (error) {
+
+
+  }
+
+  return buildResponse(project);
 };
