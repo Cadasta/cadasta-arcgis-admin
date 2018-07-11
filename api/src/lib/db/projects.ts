@@ -1,9 +1,7 @@
 import AWS from 'aws-sdk';
 import slugify from 'slugify';
 
-export async function create(name: string, username: string): Promise<Project> {
-  const DomainName =  process.env.TABLE_NAME;
-
+export async function create(DomainName: string, name: string, username: string): Promise<Project> {
   const simpledb = new AWS.SimpleDB();
   const slug: string = slugify(name).toLowerCase();
 
