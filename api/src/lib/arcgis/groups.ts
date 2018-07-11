@@ -1,12 +1,16 @@
-import { createGroup, IGroup } from '@esri/arcgis-rest-groups';
+import { createGroup } from '@esri/arcgis-rest-groups';
 import { ArcGISRequestError } from '@esri/arcgis-rest-request';
 import 'isomorphic-fetch';
 import 'isomorphic-form-data';
 import { Auth } from './authentication';
 
-export interface ParallelOpResult {
-  success: Array<{[key: string]: any}>,
-  failure: ArcGISRequestError[]
+interface ArcGISGroupCreationError {
+  err: ArcGISRequestError;
+  group: ArcGISCreateGroupRequest;
+};
+export interface MultipleGroupsCreationError {
+  success: ArcGISGroup[],
+  failure: ArcGISGroupCreationError[]
 }
 const groupNames: {[K in GroupNameShort]: string} = {
   project_managers: 'Project managers',
@@ -15,48 +19,48 @@ const groupNames: {[K in GroupNameShort]: string} = {
   viewers: 'Viewers'
 }
 
+const isError = (obj: ArcGISGroup | ArcGISGroupCreationError): obj is ArcGISGroupCreationError => !!(obj as ArcGISGroupCreationError).err
+
 export const createGroups = (
   groupNameKeys: GroupNameShort[],
   projectName: string,
   projectSlug: string,
-  owner: string,
   authentication: Auth
-): Promise<ParallelOpResult> => (
+): Promise<ArcGISGroup[]> => (
   Promise.all(groupNameKeys
     // Create ArcGIS request input
     .map(
-      (groupNameKey): IGroup => ({
+      (groupNameKey): ArcGISCreateGroupRequest => ({
         title: `${projectName}: ${groupNames[groupNameKey]}`,
-        owner,
         tags: [`project:${projectSlug}`],
-        access: 'private'
+        access: 'private',
+        owner: null,
       })
     )
     // Create group-creation promises
     .map(
-      (group: IGroup) => createGroup({
-        group,
-        authentication,
-      })
-      // Catch errors, return as error object
-      .catch((err: ArcGISRequestError) => ({ err, group }))
+      (group): Promise<ArcGISGroup | ArcGISGroupCreationError> =>
+        createGroup({ group, authentication, })
+        .then((response: ArcGISCreateGroupResponse): ArcGISGroup => response.group)
+        // If creation fails, catch errors and return object of error and offending group
+        .catch((err: ArcGISRequestError) => ({ err, group }))
     )
   )
   // Combine array of successes and failures into single object
   .then(
-    (responses): ParallelOpResult => responses.reduce(
-      (output: ParallelOpResult, result) => ({
-        success: output.success.concat(!result.err ? [result] : []),
-        failure: output.failure.concat(result.err ? [result] : [])
+    (responses): MultipleGroupsCreationError => responses.reduce(
+      (output: MultipleGroupsCreationError, result) => ({
+        success: output.success.concat(isError(result) ? [] : [result]),
+        failure: output.failure.concat(isError(result) ? [result] : [])
       }),
       { success: [], failure: [] }
     )
   )
   // Reject promise if there are any errors
   .then(
-    (response): ParallelOpResult => {
+    (response): ArcGISGroup[] => {
       if (response.failure.length) { throw response }
-      return response
+      return response.success
     }
   )
 );

@@ -1,20 +1,34 @@
-import { AWSError } from 'aws-sdk';
-
-import { APIGatewayProxyEventFactory } from '../../spec/factories';
-import { createGroups } from '../lib/arcgis/groups';
-import { create } from '../lib/db/projects';
+import {
+  APIGatewayProxyEventFactory,
+  ArcGISCreateGroupRequestFactory,
+  ArcGISGroupFactory,
+  ArcGISRequestErrorFactory,
+  AWSErrorFactory,
+  ProjectFactory,
+} from '../../spec/factories';
+import * as ArcGisPortal from '../lib/arcgis';
+import * as ProjectsDb from '../lib/db/projects';
 import handler from './create';
+
 
 jest.mock('../lib/db/projects');
 jest.mock('../lib/arcgis/groups');
 
 describe('Project Create API', () => {
-  const mockCreate = create as jest.Mock;
-  const mockCreateGroups = createGroups as jest.Mock;
+  let consoleSpy: undefined | jest.Mock;
+  const mockCreateProjects = ProjectsDb.create as jest.Mock;
+  const mockCreateGroups = ArcGisPortal.createGroups as jest.Mock;
   const event: AWSLambda.APIGatewayProxyEvent = APIGatewayProxyEventFactory({
     name: 'Congo Project',
     groups: []
   });
+
+
+  beforeEach(() => {
+    if (typeof consoleSpy === 'function') {
+      (consoleSpy as any).mockRestore();
+    }
+  })
 
   it('should return success response', async () => {
     const projectData = {
@@ -25,31 +39,20 @@ describe('Project Create API', () => {
       modified_by: 'fakeUser',
       modified_date: '2018-06-26T12:31:40.037Z'
     };
-    mockCreate.mockResolvedValue(projectData);
-    mockCreateGroups.mockResolvedValue({});
+    const groupData = ArcGISGroupFactory.build();
+    mockCreateProjects.mockResolvedValue(projectData);
+    mockCreateGroups.mockResolvedValue(groupData);
 
     const response = await handler(event);
-    expect(response.statusCode).toEqual(200);
-    expect(JSON.parse(response.body)).toEqual(projectData);
+    expect(response.statusCode).toEqual(201);
+    expect(JSON.parse(response.body)).toEqual({ project: projectData, groups: groupData });
   });
 
   it('should return server error if DB write fails', async () => {
+    consoleSpy = jest.spyOn(console, "log").mockImplementation(() => null)
     // Example errors: https://docs.aws.amazon.com/AmazonSimpleDB/latest/DeveloperGuide/APIError.html
-    const error: AWSError = Object.assign(new Error(), {
-      message: 'The specified domain does not exist.',
-      code: 'NoSuchDomain',
-      statusCode: 400,
-      retryable: false,
-      time: new Date('2018-01-01'),
-      hostname: '',
-      region: 'us-west-2',
-      retryDelay: 1,
-      requestId: '',
-      extendedRequestId: '',
-      cfId: '',
-    });
-    mockCreate.mockRejectedValue(error);
-    console.log = jest.fn()
+    const error = AWSErrorFactory.build();
+    mockCreateProjects.mockRejectedValue(error);
 
     const response = await handler(event);
 
@@ -58,6 +61,34 @@ describe('Project Create API', () => {
       err: `[${error.code}] ${error.message}`,
       msg: 'Failed to create project'
     });
-    expect(console.log).toHaveBeenCalledWith(error);
+    expect(consoleSpy).toHaveBeenCalledWith(JSON.stringify(error));
+  });
+
+  it('should return server error if DB write fails', async () => {
+    consoleSpy = jest.spyOn(console, "log").mockImplementation(() => null)
+    const project = ProjectFactory.build();
+    mockCreateProjects.mockResolvedValue(project);
+    const createGroupsResponse: ArcGisPortal.MultipleGroupsCreationError = {
+      success: [
+        ArcGISGroupFactory.build(),
+        ArcGISGroupFactory.build()
+      ],
+      failure: [
+        {err: ArcGISRequestErrorFactory.build(), group: ArcGISCreateGroupRequestFactory.build()},
+        {err: ArcGISRequestErrorFactory.build(), group: ArcGISCreateGroupRequestFactory.build()},
+      ]
+    }
+    mockCreateGroups.mockRejectedValue(createGroupsResponse);
+
+    const response = await handler(event);
+    expect(response.statusCode).toEqual(500);
+    expect(JSON.parse(response.body)).toEqual({
+      msg: 'Failed to create groups',
+      err: [
+        "COM_0044: Unable to create group.",
+        "COM_0044: Unable to create group."
+      ]
+    });
+    expect(console.log).toHaveBeenCalledWith(JSON.stringify(createGroupsResponse));
   });
 });
