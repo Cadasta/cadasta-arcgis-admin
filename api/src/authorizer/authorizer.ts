@@ -4,7 +4,7 @@ import 'isomorphic-form-data';
 type Event = AWSLambda.CustomAuthorizerEvent;
 type Response = AWSLambda.CustomAuthorizerResult;
 
-export default async ({ authorizationToken: Authorization, methodArn: resource }: Event): Promise<Response> => {
+export default async ({ authorizationToken: Authorization, methodArn: Resource }: Event): Promise<Response> => {
   const SELF_URL = `${process.env.ARCGIS_REST_URL}/community/self?f=json`;
 
   const headers = { Authorization };
@@ -20,20 +20,21 @@ export default async ({ authorizationToken: Authorization, methodArn: resource }
   // this authorizer as an Enhanced Request Authorizer:
   // https://aws.amazon.com/blogs/compute/using-enhanced-request-authorizers-in-amazon-api-gateway/
   const permitted: boolean = (user.role === 'org_admin') && user.disabled === false;
-  return generatePolicy(user.username, permitted, resource, { user: JSON.stringify(user), authorization: Authorization });
+  return {
+    principalId: user.username,
+    policyDocument: {
+      Version: '2012-10-17',
+      Statement: [
+        {
+          Action: 'execute-api:Invoke',
+          Effect: permitted ? 'Allow' : 'Deny',
+          Resource
+        }
+      ]
+    },
+    context: {
+      user: JSON.stringify(user),
+      authorization: Authorization
+    }
+  }
 };
-
-const generatePolicy = (principalId: string, permitted: boolean, resource: string, context = {}): Response => ({
-  principalId,
-  policyDocument: {
-    Version: '2012-10-17',
-    Statement: [
-      {
-        Action: 'execute-api:Invoke',
-        Effect: permitted ? 'Allow' : 'Deny',
-        Resource: resource
-      }
-    ]
-  },
-  context
-});

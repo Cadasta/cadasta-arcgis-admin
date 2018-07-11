@@ -4,7 +4,7 @@ import { response, errResponse } from '../lib/utils';
 
 export default async (event: AWSLambda.APIGatewayProxyEvent): Promise<AWSLambda.APIGatewayProxyResult> => {
   const ARCGIS_REST_URL = process.env.ARCGIS_REST_URL;
-  const DomainName =  process.env.TABLE_NAME;
+  const DOMAIN_NAME =  process.env.TABLE_NAME;
 
   const auth = new ArcGisPortal.Auth(ARCGIS_REST_URL, event.requestContext.authorizer.authorization);
   const payload: ProjectCreateRequestBody = JSON.parse(event.body);
@@ -13,7 +13,7 @@ export default async (event: AWSLambda.APIGatewayProxyEvent): Promise<AWSLambda.
   let project: Project;
   let groups: ArcGISGroup[];
   try {
-    project = await ProjectsDb.create(DomainName, payload.name, user);
+    project = await ProjectsDb.create(DOMAIN_NAME, payload.name, user);
   } catch (error) {
     console.log(JSON.stringify(error));
     return errResponse({
