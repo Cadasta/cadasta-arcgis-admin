@@ -1,4 +1,4 @@
-type GroupNameShort = 'project_managers' | 'field_supervisors' | 'data_collectors' | 'viewers';
+type GroupNameShort = 'PM' | 'FS' | 'DC' | 'VW';
 
 interface ArcGISCreateGroupRequest {
   title: string;

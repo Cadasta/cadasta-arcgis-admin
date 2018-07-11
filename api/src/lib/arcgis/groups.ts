@@ -13,10 +13,10 @@ export interface MultipleGroupsCreationError {
   failure: ArcGISGroupCreationError[]
 }
 const groupNames: {[K in GroupNameShort]: string} = {
-  project_managers: 'Project managers',
-  field_supervisors: 'Field supervisors',
-  data_collectors: 'Data Collectors',
-  viewers: 'Viewers'
+  PM: 'Project managers',
+  FS: 'Field supervisors',
+  DC: 'Data Collectors',
+  VW: 'Viewers'
 }
 
 const isError = (obj: ArcGISGroup | ArcGISGroupCreationError): obj is ArcGISGroupCreationError => !!(obj as ArcGISGroupCreationError).err
