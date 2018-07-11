@@ -15,7 +15,10 @@
 
 #### Environment Variables
 
-Custom per-environment configuration is proovided to the application via environment variables. For the sake of organization, all enviroment variables should be accessed within the Lambda handler function (and passed as arguments to functions and classes that depend on the configuration, if needed). This provides us with the following benefites: 1) It makes it obvious as to which environment variables need to be set for any given Lambda function; 2) It simplifies mocking configuration when writing tests.
+Custom per-environment configuration is provided to the application via environment variables. For the sake of organization, all enviroment variables should be accessed within the Lambda handler function (and passed as arguments to functions and classes that depend on the configuration, if needed). This provides us with the following benefites: 
+
+1. It makes it obvious as to which environment variables need to be set for any given Lambda function; 
+2. It simplifies mocking configuration when writing tests.
 
 ### Expected Behaviour
 
