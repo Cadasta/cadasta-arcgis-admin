@@ -2,7 +2,7 @@ import { Factory } from 'rosie';
 import Chance from 'chance';
 import { ArcGISRequestError } from '@esri/arcgis-rest-request';
 
-import { responseBodyFactory } from '.'
+import { responseBodyFactory } from './'
 
 const chance = new Chance();
 
@@ -61,11 +61,9 @@ export const ArcGISRequestErrorFactory = Factory.define<ArcGISRequestError>('Arc
   // })
 ;
 
-export const userResponseFactory = (userDetails = {}) => responseBodyFactory(
-  {
-    username: 'factoryUser',
-    role: 'org_admin',
-    disabled: false,
-    ...userDetails
-  }
-);
+export const userResponseFactory = (userDetails = {}) => ({
+  username: 'factoryUser',
+  role: 'org_admin',
+  disabled: false,
+  ...userDetails
+});

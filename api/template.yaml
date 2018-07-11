@@ -168,7 +168,7 @@ Resources:
     Properties:
       Handler: authorizer/authorizer.default
       Runtime: nodejs8.10
-      CodeUri: ./dist/authorizer/bar
+      CodeUri: ./dist/authorizer
       Timeout: 5
       Policies:
         - AWSLambdaBasicExecutionRole
@@ -210,4 +210,6 @@ Outputs:
   ApiURL:
     Description: API endpoint URL for Prod environment
     Value: !Sub https://${AdminApi}.execute-api.${AWS::Region}.amazonaws.com/${Stage}/hello
-
+  ProjectTableDomainName:
+    Description: Project Table Domain Name
+    Value: !Ref ProjectTable
