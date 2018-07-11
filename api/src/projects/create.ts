@@ -10,11 +10,11 @@ export default async (event: AWSLambda.APIGatewayProxyEvent): Promise<AWSLambda.
   const user = JSON.parse(event.requestContext.authorizer.user).username;
 
   let project: Project;
-  let groupsResult: ArcGisPortal.ParallelOpResult;
+  let groups: ArcGISGroup[];
   try {
     project = await ProjectsDb.create(payload.name, user);
   } catch (error) {
-    console.log(error);
+    console.log(JSON.stringify(error));
     return errResponse({
       msg: 'Failed to create project',
       err: `[${error.code}] ${error.message}`,
@@ -22,12 +22,19 @@ export default async (event: AWSLambda.APIGatewayProxyEvent): Promise<AWSLambda.
   }
 
   try {
-    groupsResult = await ArcGisPortal.createGroups(
-      payload.groups, project.name, project.slug, user, auth
+    groups = await ArcGisPortal.createGroups(
+      payload.groups, project.name, project.slug, auth
     );
   } catch (error) {
-
+    let err = error as ArcGisPortal.MultipleGroupsCreationError
+    console.log(JSON.stringify(err));
+    // TODO: Rollback successfully created groups
+    // TODO: If we don't rollback groups, we should maybe report which groups were created
+    return errResponse({
+      msg: 'Failed to create groups',
+      err: err.failure.map(({ err }) => err.message),
+    }, 500);
   }
 
-  return response(project);
+  return response({ project, groups }, 201);
 };

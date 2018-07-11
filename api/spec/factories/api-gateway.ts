@@ -1,3 +1,5 @@
+import { userResponseFactory } from '.'
+
 export const responseBodyFactory = (responseBody: object): Body => ({
   bodyUsed: true,
   arrayBuffer: () => Promise.resolve(new ArrayBuffer(0)), // TODO
@@ -6,15 +8,6 @@ export const responseBodyFactory = (responseBody: object): Body => ({
   json: () => Promise.resolve(responseBody),
   text: () => Promise.resolve(JSON.stringify(responseBody)),
 });
-
-export const userResponseFactory = (userDetails = {}) => responseBodyFactory(
-  {
-    username: 'factoryUser',
-    role: 'org_admin',
-    disabled: false,
-    ...userDetails
-  }
-);
 
 export const APIGatewayProxyEventFactory = (body: {}, method: string = 'GET'): AWSLambda.APIGatewayProxyEvent => ({
   body: JSON.stringify(body),

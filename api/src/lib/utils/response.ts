@@ -3,7 +3,7 @@ interface ResponseBody {
 }
 interface ErrResponseBody {
   msg: string;
-  err: string;
+  err: any;
 }
 interface ResponseFunction <TResponse> {
   (body: TResponse, statusCode?: number, headers?: {[key: string]: string}): AWSLambda.APIGatewayProxyResult
