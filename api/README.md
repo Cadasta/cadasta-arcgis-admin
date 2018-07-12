@@ -9,6 +9,38 @@
 * `npm run package`
 * `npm run deploy`
 
+## Development
+
+### Code Organization
+
+#### Environment Variables
+
+Custom per-environment configuration is provided to the application via environment variables. For the sake of organization, all enviroment variables should be accessed within the Lambda handler function (and passed as arguments to functions and classes that depend on the configuration, if needed). This provides us with the following benefites: 
+
+1. It makes it obvious as to which environment variables need to be set for any given Lambda function; 
+2. It simplifies mocking configuration when writing tests.
+
+### Expected Behaviour
+
+#### 4xx Responses
+
+[4xx Client errors](https://en.wikipedia.org/wiki/List_of_HTTP_status_codes#4xx_Client_errors) should respond in the following structure:
+
+```
+{
+  "msg": [Human-readable text describing what client did incorrectly, suitable for rendering on front-end],
+}
+```
+
+#### 5xx Responses
+
+```
+{
+  "msg": [Human-readable text describing what went wrong, suitable for rendering on front-end],
+  "err": [Technical description for purposes of debugging]
+}
+```
+
 ## Deploy
 
 ### Prerequisites
