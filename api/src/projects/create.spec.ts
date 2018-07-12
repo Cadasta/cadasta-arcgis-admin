@@ -8,16 +8,24 @@ import {
 } from '../../spec/factories';
 import * as ArcGisPortal from '../lib/arcgis';
 import * as ProjectsDb from '../lib/db/projects';
-import handler from './create';
+import * as validate from '../lib/utils/validate';
 
+import handler from './create';
 
 jest.mock('../lib/db/projects');
 jest.mock('../lib/arcgis/groups');
+jest.mock('../lib/utils/validate');
 
 describe('Project Create API', () => {
+  console.log = jest.fn() // Disable console.log
+
   let consoleSpy: undefined | jest.Mock;
   const mockCreateProjects = ProjectsDb.create as jest.Mock;
   const mockCreateGroups = ArcGisPortal.createGroups as jest.Mock;
+  (validate.requiredPick as jest.Mock).mockReturnValue({
+    ARCGIS_REST_URL: 'mockArcGisUrl',
+    TABLE_NAME: 'mockTableName',
+  });
   const event: AWSLambda.APIGatewayProxyEvent = APIGatewayProxyEventFactory({
     name: 'Congo Project',
     groups: []
@@ -49,8 +57,8 @@ describe('Project Create API', () => {
   });
 
   it('should return server error if DB write fails', async () => {
-    consoleSpy = jest.spyOn(console, "log").mockImplementation(() => null)
-    // Example errors: https://docs.aws.amazon.com/AmazonSimpleDB/latest/DeveloperGuide/APIError.html
+    consoleSpy = jest.spyOn(console, "error").mockImplementation(() => null)
+
     const error = AWSErrorFactory.build();
     mockCreateProjects.mockRejectedValue(error);
 
@@ -61,14 +69,16 @@ describe('Project Create API', () => {
       err: `[${error.code}] ${error.message}`,
       msg: 'Failed to create project'
     });
-    expect(consoleSpy).toHaveBeenCalledWith(JSON.stringify(error));
+    expect(console.error).toHaveBeenCalledWith(JSON.stringify(error));
   });
 
   it('should return server error if DB write fails', async () => {
-    consoleSpy = jest.spyOn(console, "log").mockImplementation(() => null)
+    consoleSpy = jest.spyOn(console, "error").mockImplementation(() => null)
+
     const project = ProjectFactory.build();
     mockCreateProjects.mockResolvedValue(project);
-    const createGroupsResponse: ArcGisPortal.MultipleGroupsCreationError = {
+
+    const createGroupsErrorResponse: ArcGisPortal.MultipleGroupsCreationError = {
       success: [
         ArcGISGroupFactory.build(),
         ArcGISGroupFactory.build()
@@ -78,7 +88,7 @@ describe('Project Create API', () => {
         {err: ArcGISRequestErrorFactory.build(), group: ArcGISCreateGroupRequestFactory.build()},
       ]
     }
-    mockCreateGroups.mockRejectedValue(createGroupsResponse);
+    mockCreateGroups.mockRejectedValue(createGroupsErrorResponse);
 
     const response = await handler(event);
     expect(response.statusCode).toEqual(500);
@@ -89,6 +99,6 @@ describe('Project Create API', () => {
         "COM_0044: Unable to create group."
       ]
     });
-    expect(console.log).toHaveBeenCalledWith(JSON.stringify(createGroupsResponse));
+    expect(console.error).toHaveBeenCalledWith(JSON.stringify(createGroupsErrorResponse));
   });
 });

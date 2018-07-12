@@ -6,3 +6,8 @@ interface Project {
   modified_by: string;
   modified_date: string;
 }
+
+interface ProjectListResponse {
+  results: Project[];
+  nextToken?: string;
+}

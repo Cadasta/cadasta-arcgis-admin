@@ -1,8 +1,8 @@
-import AWS from 'aws-sdk';
+import { SimpleDB } from 'aws-sdk';
 import slugify from 'slugify';
 
 export async function create(DomainName: string, name: string, username: string): Promise<Project> {
-  const simpledb = new AWS.SimpleDB();
+  const simpledb = new SimpleDB();
   const slug: string = slugify(name).toLowerCase();
 
   let proposedSlug: string = slug;
@@ -28,7 +28,10 @@ export async function create(DomainName: string, name: string, username: string)
     };
     try {
       console.log(
-        await simpledb.putAttributes(params).promise()
+        'simpledb.putAttributes Response: ',
+        JSON.stringify(
+          await simpledb.putAttributes(params).promise()
+        )
       );
       return {
         name,
@@ -47,4 +50,22 @@ export async function create(DomainName: string, name: string, username: string)
       }
     }
   }
+}
+
+export async function list(DomainName: string): Promise<ProjectListResponse> {
+  const simpledb = new SimpleDB();
+  const params: SimpleDB.SelectRequest = {
+    SelectExpression: `select * from \`${DomainName}\``
+  };
+  console.log(`Querying SimpleDB: ${JSON.stringify(params, null, 2)}`);
+  const resp = await simpledb.select(params).promise();
+  return {
+    results: resp.Items.map(
+      item => item.Attributes.reduce(
+        (obj, attr) => Object.assign(obj, {[attr.Name]: attr.Value}),
+        {}
+      ) as Project
+    ),
+    nextToken: resp.NextToken
+  };
 }
