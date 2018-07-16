@@ -9,7 +9,7 @@ export const responseBodyFactory = (responseBody: object): Body => ({
   text: () => Promise.resolve(JSON.stringify(responseBody)),
 });
 
-export const APIGatewayProxyEventFactory = (opts: {[key: string]: any}): AWSLambda.APIGatewayProxyEvent => {
+export const APIGatewayProxyEventFactory = (opts: {[key: string]: any} = {}): AWSLambda.APIGatewayProxyEvent => {
   opts = {
     body: {},
     method: 'GET',
@@ -26,7 +26,7 @@ export const APIGatewayProxyEventFactory = (opts: {[key: string]: any}): AWSLamb
     isBase64Encoded: false,
     path: opts.path,
     pathParameters: null,
-    queryStringParameters: null,
+    queryStringParameters: opts.queryStringParameters,
     stageVariables: null,
     requestContext: {
       accountId: 'oroick',

@@ -1,4 +1,4 @@
-import { AWSErrorFactory } from '../../spec/factories';
+import { AWSErrorFactory, APIGatewayProxyEventFactory } from '../../spec/factories';
 
 import * as ProjectsDb from '../lib/db/projects';
 import * as validate from '../lib/utils/validate';
@@ -42,18 +42,18 @@ describe('Project List API', () => {
     };
     mockListProjects.mockResolvedValue(projectsData);
 
-    const response = await handler();
+    const event = APIGatewayProxyEventFactory({ queryStringParameters: null });
+    const response = await handler(event);
     expect(response.statusCode).toEqual(200);
     expect(JSON.parse(response.body)).toEqual(projectsData);
   });
 
-  it('should return server error if DB write fails', async () => {
+  it('should return server error if DB read fails', async () => {
     consoleSpy = jest.spyOn(console, "error").mockImplementation(() => null)
 
     const error = AWSErrorFactory.build();
     mockListProjects.mockRejectedValue(error);
-
-    const response = await handler();
+    const response = await handler(APIGatewayProxyEventFactory());
 
     expect(response.statusCode).toEqual(500);
     expect(JSON.parse(response.body)).toEqual({
@@ -63,33 +63,4 @@ describe('Project List API', () => {
     expect(console.error).toHaveBeenCalledWith(JSON.stringify(error));
   });
 
-  // it('should return server error if DB write fails', async () => {
-  //   consoleSpy = jest.spyOn(console, "error").mockImplementation(() => null)
-
-  //   const project = ProjectFactory.build();
-  //   mockCreateProjects.mockResolvedValue(project);
-
-  //   const createGroupsErrorResponse: ArcGisPortal.MultipleGroupsCreationError = {
-  //     success: [
-  //       ArcGISGroupFactory.build(),
-  //       ArcGISGroupFactory.build()
-  //     ],
-  //     failure: [
-  //       {err: ArcGISRequestErrorFactory.build(), group: ArcGISCreateGroupRequestFactory.build()},
-  //       {err: ArcGISRequestErrorFactory.build(), group: ArcGISCreateGroupRequestFactory.build()},
-  //     ]
-  //   }
-  //   mockCreateGroups.mockRejectedValue(createGroupsErrorResponse);
-
-  //   const response = await handler(event);
-  //   expect(response.statusCode).toEqual(500);
-  //   expect(JSON.parse(response.body)).toEqual({
-  //     msg: 'Failed to create groups',
-  //     err: [
-  //       "COM_0044: Unable to create group.",
-  //       "COM_0044: Unable to create group."
-  //     ]
-  //   });
-  //   expect(console.error).toHaveBeenCalledWith(JSON.stringify(createGroupsErrorResponse));
-  // });
 });
