@@ -32,8 +32,7 @@ Resources:
       DefinitionBody: # https://swagger.io/specification/
         swagger: 2.0
         info:
-          title:
-            Ref: AWS::StackName
+          title: !Ref AWS::StackName
           description: My API that uses custom authorizer
           version: 1.0.0
         schemes:
@@ -55,6 +54,15 @@ Resources:
                 - CustomAuthorizer: []
 
           /projects:
+            get:
+              summary: List Projects
+              x-amazon-apigateway-integration:
+                httpMethod: POST
+                type: aws_proxy
+                uri: !Sub arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${ProjectsList.Arn}/invocations
+              responses: {}
+              security:
+                - CustomAuthorizer: []
             post:
               summary: Create a new Projects
               requestBody:
@@ -122,27 +130,22 @@ Resources:
       Runtime: nodejs8.10
       CodeUri: ./dist/hello
       Timeout: 5
-      Policies:
-        - AWSLambdaBasicExecutionRole
       Events:
         GetApi:
           Type: Api
           Properties:
             Path: /hello
             Method: GET
-            RestApiId:
-                Ref: AdminApi
+            RestApiId: !Ref AdminApi
 
   ProjectsCreate:
     Type: AWS::Serverless::Function
     Properties:
       Handler: projects/create.default
       Runtime: nodejs8.10
-      CodeUri: ./dist/projects
+      CodeUri: ./dist
       Timeout: 5
       Policies:
-        - AWSLambdaBasicExecutionRole
-        - AmazonDynamoDBFullAccess
         - Version: 2012-10-17
           Statement:
             - Effect: Allow
@@ -152,16 +155,40 @@ Resources:
                 Fn::Sub: arn:aws:sdb:${AWS::Region}:${AWS::AccountId}:domain/${ProjectTable}
       Environment:
         Variables:
-          TABLE_NAME:
-            Ref: ProjectTable
+          TABLE_NAME: !Ref ProjectTable
       Events:
         GetApi:
           Type: Api
           Properties:
             Path: /projects
             Method: POST
-            RestApiId:
-              Ref: AdminApi
+            RestApiId: !Ref AdminApi
+
+  ProjectsList:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: projects/list.default
+      Runtime: nodejs8.10
+      CodeUri: ./dist
+      Timeout: 5
+      Policies:
+        - Version: 2012-10-17
+          Statement:
+            - Effect: Allow
+              Action:
+                - sdb:Select
+              Resource:
+                Fn::Sub: arn:aws:sdb:${AWS::Region}:${AWS::AccountId}:domain/${ProjectTable}
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref ProjectTable
+      Events:
+        GetApi:
+          Type: Api
+          Properties:
+            Path: /projects
+            Method: GET
+            RestApiId: !Ref AdminApi
 
   ArcGisAuthorizer:
     Type: AWS::Serverless::Function
