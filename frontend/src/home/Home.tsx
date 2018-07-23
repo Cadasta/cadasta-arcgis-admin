@@ -7,13 +7,16 @@ import { PageHeader } from "../shared/styled-components/PageHeader";
 interface Props extends React.HTMLAttributes<HTMLElement> {}
 const Home: React.SFC<Props> = ({ className = "" }) => (
   <div>
-    <PageHeader>Dashboard</PageHeader>
+    <PageHeader>Home</PageHeader>
     <ul>
       <li>
         <Link to={urls.SignIn}>Sign In</Link>
       </li>
       <li>
         <Link to={urls.CreateProject}>Create Project</Link>
+      </li>
+      <li>
+        <Link to={urls.ListProjects}>View Projects</Link>
       </li>
     </ul>
   </div>

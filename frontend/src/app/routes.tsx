@@ -6,12 +6,14 @@ import { Guard, guards } from "../auth/guards";
 import SignIn from "../auth/SignIn";
 import Home from "../home/Home";
 import CreateProject from "../projects/Create";
+import ListProjects from "../projects/List";
 import NoMatch from "./NoMatch";
 
 export const urls: { [key: string]: string } = {
   Home: "/",
   SignIn: "/auth/sign-in",
   CreateProject: "/projects/create",
+  ListProjects: "/projects/list",
   NoMatch: "nomatch"
 };
 
@@ -47,6 +49,12 @@ const routeConfig: RouteDeclaration[] = [
   {
     path: urls.CreateProject,
     component: CreateProject,
+    exact: true,
+    checks: [guards.isLoggedIn]
+  },
+  {
+    path: urls.ListProjects,
+    component: ListProjects,
     exact: true,
     checks: [guards.isLoggedIn]
   },
