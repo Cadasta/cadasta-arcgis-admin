@@ -1,9 +1,9 @@
-import { userResponseFactory } from '.'
+import { userResponseFactory } from '.';
 
 export const responseBodyFactory = (responseBody: object): Body => ({
-  bodyUsed: true,
   arrayBuffer: () => Promise.resolve(new ArrayBuffer(0)), // TODO
   blob: () => Promise.resolve(new Blob()), // TODO
+  bodyUsed: true,
   formData: () => Promise.resolve(new FormData), // TODO
   json: () => Promise.resolve(responseBody),
   text: () => Promise.resolve(JSON.stringify(responseBody)),
@@ -11,12 +11,12 @@ export const responseBodyFactory = (responseBody: object): Body => ({
 
 export const APIGatewayProxyEventFactory = (opts: {[key: string]: any} = {}): AWSLambda.APIGatewayProxyEvent => {
   opts = {
+    authorization: 'abc123',
     body: {},
-    method: 'GET',
     headers: {},
+    method: 'GET',
     path: '/projects/',
     user: userResponseFactory(),
-    authorization: 'abc123',
     ...opts,
   };
   return {
@@ -27,10 +27,13 @@ export const APIGatewayProxyEventFactory = (opts: {[key: string]: any} = {}): AW
     path: opts.path,
     pathParameters: null,
     queryStringParameters: opts.queryStringParameters,
-    stageVariables: null,
     requestContext: {
       accountId: 'oroick',
       apiId: 'API',
+      authorizer: {
+        authorization: opts.authorization,
+        user: JSON.stringify(opts.user),
+      },
       httpMethod: opts.method,
       identity: {
         accessKey: null,
@@ -48,16 +51,13 @@ export const APIGatewayProxyEventFactory = (opts: {[key: string]: any} = {}): AW
         userArn: null,
       },
       path: opts.path,
-      stage: 'test',
       requestId: '1',
       requestTimeEpoch: 0,
       resourceId: '1',
       resourcePath: '1',
-      authorizer: {
-        user: JSON.stringify(opts.user),
-        authorization: opts.authorization,
-      }
+      stage: 'test',
     },
-    resource: 'string'
+    resource: 'string',
+    stageVariables: null
   };
-}
+};

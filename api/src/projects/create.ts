@@ -1,6 +1,6 @@
 import * as ArcGisPortal from '../lib/arcgis';
 import * as ProjectsDb from '../lib/db/projects';
-import { response, errResponse, requiredPick } from '../lib/utils';
+import { errResponse, requiredPick, response } from '../lib/utils';
 
 export default async (event: AWSLambda.APIGatewayProxyEvent): Promise<AWSLambda.APIGatewayProxyResult> => {
   const {
@@ -15,30 +15,36 @@ export default async (event: AWSLambda.APIGatewayProxyEvent): Promise<AWSLambda.
   let project: Project;
   let groups: ArcGISGroup[];
   try {
-    console.log(`Creating project ${payload.name}`)
+    console.log(`Creating project ${payload.name}`);
     project = await ProjectsDb.create(DOMAIN_NAME, payload.name, user);
   } catch (error) {
-    console.error(JSON.stringify(error));
-    return errResponse({
-      msg: 'Failed to create project',
-      err: `[${error.code}] ${error.message}`,
-    }, 500);
+    console.log(JSON.stringify(error));
+    return errResponse(
+      {
+        err: `[${error.code}] ${error.message}`,
+        msg: 'Failed to create project',
+      },
+      500
+    );
   }
 
   try {
-    console.log(`Creating groups ${payload.groups}`)
+    console.log(`Creating groups ${payload.groups}`);
     groups = await ArcGisPortal.createGroups(
       payload.groups, project.name, project.slug, auth
     );
   } catch (error) {
-    console.error(JSON.stringify(error));
-    let err = error as ArcGisPortal.MultipleGroupsCreationError
+    const e = error as ArcGisPortal.MultipleGroupsCreationError;
+    console.log(JSON.stringify(e));
     // TODO: Rollback successfully created groups
     // TODO: If we don't rollback groups, we should maybe report which groups were created
-    return errResponse({
-      msg: 'Failed to create groups',
-      err: err.failure.map(({ err }) => err.message),
-    }, 500);
+    return errResponse(
+      {
+        err: e.failure.map(({ err }) => err.message),
+        msg: 'Failed to create groups',
+      },
+      500
+    );
   }
 
   return response({ project, groups }, 201);

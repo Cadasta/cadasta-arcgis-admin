@@ -1,3 +1,6 @@
+import * as ArcGisPortal from '../lib/arcgis';
+import * as ProjectsDb from '../lib/db/projects';
+import * as validate from '../lib/utils/validate';
 import {
   APIGatewayProxyEventFactory,
   ArcGISCreateGroupRequestFactory,
@@ -6,9 +9,6 @@ import {
   AWSErrorFactory,
   ProjectFactory,
 } from '../spec/factories';
-import * as ArcGisPortal from '../lib/arcgis';
-import * as ProjectsDb from '../lib/db/projects';
-import * as validate from '../lib/utils/validate';
 
 import handler from './create';
 
@@ -17,7 +17,7 @@ jest.mock('../lib/arcgis/groups');
 jest.mock('../lib/utils/validate');
 
 describe('Project Create API', () => {
-  console.log = jest.fn() // Disable console.log
+  console.log = jest.fn(); // Disable console.log
 
   let consoleSpy: undefined | jest.Mock;
   const mockCreateProjects = ProjectsDb.create as jest.Mock;
@@ -27,25 +27,24 @@ describe('Project Create API', () => {
     TABLE_NAME: 'mockTableName',
   });
   const event: AWSLambda.APIGatewayProxyEvent = APIGatewayProxyEventFactory({
-    name: 'Congo Project',
-    groups: []
+    groups: [],
+    name: 'Congo Project'
   });
-
 
   beforeEach(() => {
     if (typeof consoleSpy === 'function') {
       (consoleSpy as any).mockRestore();
     }
-  })
+  });
 
   it('should return success response', async () => {
     const projectData = {
-      name: 'Congo Project',
-      slug: 'congo-project',
       created_by: 'fakeUser',
       created_date: '2018-06-26T12:31:40.037Z',
       modified_by: 'fakeUser',
-      modified_date: '2018-06-26T12:31:40.037Z'
+      modified_date: '2018-06-26T12:31:40.037Z',
+      name: 'Congo Project',
+      slug: 'congo-project'
     };
     const groupData = ArcGISGroupFactory.build();
     mockCreateProjects.mockResolvedValue(projectData);
@@ -57,7 +56,7 @@ describe('Project Create API', () => {
   });
 
   it('should return server error if DB write fails', async () => {
-    consoleSpy = jest.spyOn(console, "error").mockImplementation(() => null)
+    consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => null);
 
     const error = AWSErrorFactory.build();
     mockCreateProjects.mockRejectedValue(error);
@@ -73,31 +72,31 @@ describe('Project Create API', () => {
   });
 
   it('should return server error if DB write fails', async () => {
-    consoleSpy = jest.spyOn(console, "error").mockImplementation(() => null)
+    consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => null);
 
     const project = ProjectFactory.build();
     mockCreateProjects.mockResolvedValue(project);
 
     const createGroupsErrorResponse: ArcGisPortal.MultipleGroupsCreationError = {
-      success: [
-        ArcGISGroupFactory.build(),
-        ArcGISGroupFactory.build()
-      ],
       failure: [
         {err: ArcGISRequestErrorFactory.build(), group: ArcGISCreateGroupRequestFactory.build()},
         {err: ArcGISRequestErrorFactory.build(), group: ArcGISCreateGroupRequestFactory.build()},
+      ],
+      success: [
+        ArcGISGroupFactory.build(),
+        ArcGISGroupFactory.build()
       ]
-    }
+    };
     mockCreateGroups.mockRejectedValue(createGroupsErrorResponse);
 
     const response = await handler(event);
     expect(response.statusCode).toEqual(500);
     expect(JSON.parse(response.body)).toEqual({
-      msg: 'Failed to create groups',
       err: [
-        "COM_0044: Unable to create group.",
-        "COM_0044: Unable to create group."
-      ]
+        'COM_0044: Unable to create group.',
+        'COM_0044: Unable to create group.'
+      ],
+      msg: 'Failed to create groups'
     });
     expect(console.error).toHaveBeenCalledWith(JSON.stringify(createGroupsErrorResponse));
   });
