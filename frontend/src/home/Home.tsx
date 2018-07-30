@@ -1,11 +1,11 @@
-import * as React from "react";
-import { Link } from "react-router-dom";
+import * as React from 'react';
+import { Link } from 'react-router-dom';
 
-import { urls } from "../app/routes";
-import { PageHeader } from "../shared/styled-components/PageHeader";
+import { urls } from '../app/routes';
+import { PageHeader } from '../shared/styled-components/PageHeader';
 
 interface Props extends React.HTMLAttributes<HTMLElement> {}
-const Home: React.SFC<Props> = ({ className = "" }) => (
+const Home: React.SFC<Props> = ({ className = '' }) => (
   <div>
     <PageHeader>Home</PageHeader>
     <ul>

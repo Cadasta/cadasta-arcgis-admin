@@ -1,13 +1,13 @@
-import * as React from "react";
-import { Checkbox, CheckboxGroup } from "react-checkbox-group";
-import { connect, DispatchProp } from "react-redux";
-import { Link, RouteProps } from "react-router-dom";
-import { Breadcrumb, BreadcrumbItem, Button, Col, Form, FormGroup, FormText, Input, Label } from "reactstrap";
+import * as React from 'react';
+import { Checkbox, CheckboxGroup } from 'react-checkbox-group';
+import { connect, DispatchProp } from 'react-redux';
+import { Link, RouteProps } from 'react-router-dom';
+import { Breadcrumb, BreadcrumbItem, Button, Col, Form, FormGroup, FormText, Input, Label } from 'reactstrap';
 
-import { StoreState } from "../app/reducers";
-import { urls } from "../app/routes";
-import { ADMIN_API_PROJECT_URL } from "../config";
-import { PageHeader } from "../shared/styled-components/PageHeader";
+import { StoreState } from '../app/reducers';
+import { urls } from '../app/routes';
+import { ADMIN_API_PROJECT_URL } from '../config';
+import { PageHeader } from '../shared/styled-components/PageHeader';
 
 interface Props extends RouteProps, DispatchProp {
   token: string;
@@ -20,11 +20,11 @@ interface State {
 }
 class Create extends React.Component<Props, State> {
   constructor(props: Props) {
-    super(props)
+    super(props);
     this.state = {
+      err: false,
+      projectGroups: ['PM', 'FS', 'DC', 'VW'],
       projectName: '',
-      projectGroups: ['PM','FS','DC','VW'],
-      err: false
     };
     this.createProject = this.createProject.bind(this);
     this.handleName = this.handleName.bind(this);
@@ -38,38 +38,39 @@ class Create extends React.Component<Props, State> {
         <Breadcrumb>
           <BreadcrumbItem><Link to={urls.Home}>Home</Link></BreadcrumbItem>
           <BreadcrumbItem><Link to={urls.ListProjects}>Projects</Link></BreadcrumbItem>
-          <BreadcrumbItem active>Create new project</BreadcrumbItem>
+          <BreadcrumbItem active={true}>Create new project</BreadcrumbItem>
         </Breadcrumb>
         <Form onSubmit={this.createProject}>
-          <FormGroup row>
+          <FormGroup row={true}>
             <Label for="projectName" sm={3}>Project name</Label>
             <Col sm={9}>
-              <Input id="projectName" required value={this.state.projectName} onChange={this.handleName} />
+              <Input id="projectName" required={true} value={this.state.projectName} onChange={this.handleName} />
             </Col>
           </FormGroup>
-          <FormGroup row>
+          <FormGroup row={true}>
             <Label sm={3}>Groups</Label>
             <Col sm={9}>
-              <CheckboxGroup className="checkboxgroup" checkboxDepth={2} name="projectGroups" value={this.state.projectGroups} onChange={this.handleGroups}>
-                <Label check>
+              <CheckboxGroup className="checkboxgroup" checkboxDepth={2} name="projectGroups"
+                             value={this.state.projectGroups} onChange={this.handleGroups}>
+                <Label check={true}>
                   <Checkbox value="PM" /> Project Managers
                     <FormText color="muted" className="pb-3">
                       Group responsible for all aspects of the project
                     </FormText>
                 </Label>
-                <Label check>
+                <Label check={true}>
                   <Checkbox value="FS"/> Supervisors
                     <FormText color="muted" className="pb-3">
                       Group responsible for managing all field operations
                     </FormText>
                 </Label>
-                <Label check>
+                <Label check={true}>
                   <Checkbox value="DC"/> Data Collectors
                     <FormText color="muted" className="pb-3">
                       Group responsible for data collection in the field
                     </FormText>
                 </Label>
-                <Label check>
+                <Label check={true}>
                   <Checkbox value="VW"/> Viewers
                     <FormText color="muted" className="pb-3">
                       Group with read-only permissions
@@ -78,7 +79,7 @@ class Create extends React.Component<Props, State> {
               </CheckboxGroup>
             </Col>
           </FormGroup>
-          <FormGroup row>
+          <FormGroup row={true}>
             <Col sm={{ size: 9, offset: 3 }}>
               <Button color="primary">Submit</Button>{' '}
             </Col>
@@ -86,44 +87,44 @@ class Create extends React.Component<Props, State> {
         </Form>
         {
           this.state.apiResponse &&
-          <code style={ this.state.err ? {border: "2px solid red"} : {} }>
+          <code style={ this.state.err ? {border: '2px solid red'} : {} }>
             { JSON.stringify(this.state.apiResponse) }
           </code>
         }
       </React.Fragment>
-    )
+    );
   }
 
-  private handleName(event:React.FormEvent<HTMLInputElement>) {
+  private handleName(event: React.FormEvent<HTMLInputElement>) {
     this.setState({
       projectName: event.currentTarget.value
     });
   }
 
-  private handleGroups = (newProjectGroups:string[]) => {
+  private handleGroups = (newProjectGroups: string[]) => {
     this.setState({
       projectGroups: newProjectGroups
     });
   }
 
-  private createProject(event:React.FormEvent<HTMLFormElement>) {
+  private createProject(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     // TODO: Mv to Redux + Thunks
     const options = {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${this.props.token}`
-      },
       body: JSON.stringify({
-        name: this.state.projectName,
-        groups: this.state.projectGroups
-      })
+        groups: this.state.projectGroups,
+        name: this.state.projectName
+      }),
+      headers: {
+        'Authorization': `Bearer ${this.props.token}`,
+        'Content-Type': 'application/json',
+      },
+      method: 'POST'
     };
     fetch(ADMIN_API_PROJECT_URL, options)
       .then(resp => resp.json())
       .then(apiResponse => this.setState({apiResponse, err: false}))
-      .catch(apiResponse => this.setState({apiResponse, err: true}))
+      .catch(apiResponse => this.setState({apiResponse, err: true}));
   }
 }
 

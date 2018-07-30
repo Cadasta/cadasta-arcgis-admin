@@ -1,21 +1,21 @@
-import * as React from "react";
-import { Link } from "react-router-dom";
-import { Breadcrumb, BreadcrumbItem, Button, Table } from "reactstrap";
+import * as React from 'react';
+import { Link } from 'react-router-dom';
+import { Breadcrumb, BreadcrumbItem, Button, Table } from 'reactstrap';
 
-import { urls } from "../app/routes";
-import { PageHeader } from "../shared/styled-components/PageHeader";
+import { urls } from '../app/routes';
+import { PageHeader } from '../shared/styled-components/PageHeader';
 
 interface Props extends React.HTMLAttributes<HTMLElement> {}
 
-const ProjectList: React.SFC<Props> = ({ className = "" }) => (
+const ProjectList: React.SFC<Props> = ({ className = '' }) => (
   <div>
     <PageHeader>Projects</PageHeader>
     <Breadcrumb>
       <BreadcrumbItem><Link to={urls.Home}>Home</Link></BreadcrumbItem>
-      <BreadcrumbItem active>Projects</BreadcrumbItem>
+      <BreadcrumbItem active={true}>Projects</BreadcrumbItem>
     </Breadcrumb>
     <Button color="primary" size="sm" className="mb-3" tag={Link} to={urls.CreateProject}>Create New</Button>
-    <Table hover>
+    <Table hover={true}>
         <thead>
           <tr>
             <th>Project Name</th>
