@@ -1,7 +1,7 @@
 import fetch from 'isomorphic-fetch';
 import AWSLambda from 'aws-lambda';
 
-import { userResponseFactory, responseBodyFactory } from '../../spec/factories';
+import { userResponseFactory, responseBodyFactory } from '../spec/factories';
 import handler from './authorizer';
 
 jest.mock('isomorphic-fetch');

@@ -1,27 +1,15 @@
 import { SimpleDB } from "aws-sdk";
 import * as ProjectsDb from "./projects";
-import { ProjectFactory } from "../../../spec/factories";
+import { mockAwsMethodPromiseObject, ProjectFactory } from "../../spec";
 
-jest.mock("aws-sdk");
-const MockSimpleDB = (SimpleDB as any) as jest.MockInstance<SimpleDB>;
-console.log = jest.fn(); // mute console.log
-
-// Create mock object that simulates the response of `new SimpleDB().someMethod(args).promise()`
-const mockAwsMethodPromiseObject = (prototype: {
-  [method: string]: any;
-}): { [key: string]: jest.Mock } =>
-  Object.assign(
-    {},
-    ...Object.entries(prototype).map(([method, mock]: [string, jest.Mock]) => ({
-      [method]: jest.fn(() => ({
-        promise: mock
-      }))
-    }))
-  );
 const convertProjectToSimpleDbItem = (project: Project): SimpleDB.Item => ({
   Name: project.slug,
   Attributes: Object.entries(project).map(([Name, Value]) => ({ Name, Value }))
 });
+
+jest.mock("aws-sdk");
+const MockSimpleDB = (SimpleDB as any) as jest.MockInstance<SimpleDB>;
+console.log = jest.fn(); // mute console.log
 
 describe("ProjectsDb.create()", () => {
   let timeNow: Date;

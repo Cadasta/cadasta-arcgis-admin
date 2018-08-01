@@ -5,7 +5,7 @@ import {
   ArcGISRequestErrorFactory,
   AWSErrorFactory,
   ProjectFactory,
-} from '../../spec/factories';
+} from '../spec/factories';
 import * as ArcGisPortal from '../lib/arcgis';
 import * as ProjectsDb from '../lib/db/projects';
 import * as validate from '../lib/utils/validate';

@@ -1,4 +1,4 @@
-import { AWSErrorFactory, APIGatewayProxyEventFactory } from '../../spec/factories';
+import { AWSErrorFactory, APIGatewayProxyEventFactory } from '../spec/factories';
 
 import * as ProjectsDb from '../lib/db/projects';
 import * as validate from '../lib/utils/validate';
