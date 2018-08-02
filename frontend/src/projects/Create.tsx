@@ -1,10 +1,11 @@
 import * as React from "react";
 import { Checkbox, CheckboxGroup } from "react-checkbox-group";
 import { connect, DispatchProp } from "react-redux";
-import { RouteProps } from "react-router-dom";
-import { Button, Col, Form, FormGroup, FormText, Input, Label } from "reactstrap";
+import { Link, RouteProps } from "react-router-dom";
+import { Breadcrumb, BreadcrumbItem, Button, Col, Form, FormGroup, FormText, Input, Label } from "reactstrap";
 
 import { StoreState } from "../app/reducers";
+import { urls } from "../app/routes";
 import { ADMIN_API_PROJECT_URL } from "../config";
 import { PageHeader } from "../shared/styled-components/PageHeader";
 
@@ -34,6 +35,11 @@ class Create extends React.Component<Props, State> {
     return (
       <React.Fragment>
         <PageHeader>Create Project</PageHeader>
+        <Breadcrumb>
+          <BreadcrumbItem><Link to={urls.Home}>Home</Link></BreadcrumbItem>
+          <BreadcrumbItem><Link to={urls.ListProjects}>Projects</Link></BreadcrumbItem>
+          <BreadcrumbItem active>Create new project</BreadcrumbItem>
+        </Breadcrumb>
         <Form onSubmit={this.createProject}>
           <FormGroup row>
             <Label for="projectName" sm={3}>Project name</Label>

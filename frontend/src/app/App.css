@@ -73,3 +73,10 @@ h6 {
   margin-top: .3rem;
   margin-left: -1.25rem;
 }
+
+.breadcrumb {
+  background-color: transparent;
+  padding-left: 0;
+  margin-top: -36px;
+  font-size: 12px;
+}
