@@ -8,8 +8,27 @@
 * `npm run build`
 * `npm run package`
 * `npm run deploy`
+* `npm run dev-server`
 
 ## Development
+
+### Functional Testing
+
+#### API Server
+
+A development server can be run with the `dev-server` command. This is a wrapper around [`sam local start-api`](https://github.com/awslabs/aws-sam-cli#user-content-run-api-gateway-locally) that auto-reloads when the contents of `dist` changes. The dev server requires that a `env.json` file be present, providing all required environment variables. The downside of this approach is that **the development server does not make use of our authorizer, meaning that the authorization token will not be set within the `APIGatewayProxyEvent.requestContext`.** If you need to test an API endpoint that makes use of the authorization token (e.g. to make a request to our ArcGIS Server Portal), it is recommended to invoke the function manually.
+
+#### Invoking Functions
+
+SAM provides a command to invoke a function manually via `sam local invoke [FunctionName]`. This requires the input of a JSON event object that will be passed to the Lamdba function. The `generate-event` script is designed to assist in the generation of these events:
+
+```sh
+$ ./generate-event api --body '{"foo": "bar"}' --token "abcd123" | sam local invoke ProjectsCreate -n env.json
+```
+
+As a convenience, the `generate-event` script passes the current environment's `TOKEN` environment variable (if set) by default, however this can be overridden with the `--token` argument.
+
+_Note: SAM also provides a helper to generate API events: [`sam local generate-event api`](https://github.com/awslabs/aws-sam-cli#user-content-generate-sample-event-source-payloads), however at time of writing it does not provide an option the enhanced context in `APIGatewayProxyEvent.requestContext` (i.e. we can not simulate our authorizer's insertion of an authorization token into the `APIGatewayProxyEvent.requestContext`). Once this feature becomes available, utilizing `sam local generate-event` will likely become the recommended way to generaate events._
 
 ### Code Organization
 

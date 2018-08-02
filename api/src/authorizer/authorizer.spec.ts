@@ -1,7 +1,7 @@
 import fetch from 'isomorphic-fetch';
 import AWSLambda from 'aws-lambda';
 
-import { userResponseFactory } from '../../spec/factories';
+import { userResponseFactory, responseBodyFactory } from '../spec/factories';
 import handler from './authorizer';
 
 jest.mock('isomorphic-fetch');
@@ -26,7 +26,7 @@ describe('API Gateway CustomAuthorizer', () => {
   });
 
   it('should produce valid API Gateway CustomAuthorizer AuthResponse', async () => {
-    mockFetch.mockResolvedValue(userResponseFactory());
+    mockFetch.mockResolvedValue(responseBodyFactory(userResponseFactory()));
     const resp = await handler(eventBase);
     expect(typeof resp.principalId).toBe('string');
     expect(typeof resp.policyDocument).toBe('object');
@@ -51,9 +51,13 @@ describe('API Gateway CustomAuthorizer', () => {
   });
 
   it('should allow admins', async () => {
-    mockFetch.mockResolvedValue(userResponseFactory({
-      role: 'org_admin', disabled: false
-    }));
+    mockFetch.mockResolvedValue(
+      responseBodyFactory(
+        userResponseFactory({
+          role: 'org_admin', disabled: false
+        })
+      )
+    );
     const resp = await handler(eventBase);
     expect(resp.policyDocument.Statement.map(s => (s as any).Action)).toEqual(['execute-api:Invoke']); // tslint:disable-line
     expect(resp.policyDocument.Statement.map(s => s.Effect)).toEqual(['Allow']);
@@ -61,33 +65,45 @@ describe('API Gateway CustomAuthorizer', () => {
   });
 
   it('should deny non-admins', async () => {
-    mockFetch.mockResolvedValue(userResponseFactory({
-      role: 'viewer'
-    }));
+    mockFetch.mockResolvedValue(
+      responseBodyFactory(
+        userResponseFactory({
+          role: 'viewer',
+        })
+      )
+    );
     const resp = await handler(eventBase);
     expect(resp.policyDocument.Statement.map(s => s.Effect)).toEqual(['Deny']);
   });
 
   it('should deny disabled-admins', async () => {
-    mockFetch.mockResolvedValue(userResponseFactory({
-      role: 'org_admin', disabled: true
-    }));
+    mockFetch.mockResolvedValue(
+      responseBodyFactory(
+        userResponseFactory({
+          role: 'org_admin', disabled: true
+        })
+      )
+    );
     const resp = await handler(eventBase);
     expect(resp.policyDocument.Statement.map(s => s.Effect)).toEqual(['Deny']);
   });
 
   it('should set principalId to response username', async () => {
-    mockFetch.mockResolvedValue(userResponseFactory({
-      username: 'MyUser'
-    }));
+    mockFetch.mockResolvedValue(
+      responseBodyFactory(
+        userResponseFactory({
+          username: 'MyUser'
+        })
+      )
+    );
     const resp = await handler(eventBase);
     expect(resp.principalId).toBe('MyUser');
   });
 
   it('should set JSON stringify\'d user at \'user\' key and authorization token in policy context', async () => {
-    const user = userResponseFactory({
-      role: 'org_admin', disabled: true
-    });
+    const user = responseBodyFactory(
+      userResponseFactory({ role: 'org_admin', disabled: true })
+    );
     mockFetch.mockResolvedValue(user);
     const resp = await handler(eventBase);
     expect(resp.context).toEqual({

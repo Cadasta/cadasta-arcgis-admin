@@ -19,7 +19,6 @@ export interface RouteDeclaration extends RouteProps {
   checks?: Guard[];
 }
 const routeConfig: RouteDeclaration[] = [
-  /* TODO: Ensure that random URLs redirect to 404. No auth should be required, naturally. */
   {
     /* Redirect any URL without trailing slash to endpoint with appended slash */
     path: "/:url*",

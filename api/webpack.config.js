@@ -31,6 +31,7 @@ const entries = Object.values(cfn.Resources)
       {}
   );
 
+console.log(`Stage ${process.env.STAGE}...`)
 console.log(`Building for ${conf.prodMode ? 'production' : 'development'}...`)
 
 module.exports = {

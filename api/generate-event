@@ -1,0 +1,46 @@
+#!node_modules/.bin/ts-node
+/*
+  This is a helper to generate
+*/
+
+const cli = require('yargs');
+const gatewayFactory = require('./spec/factories/api-gateway');
+
+cli
+  .command(['api'], 'Generate an APIGatewayProxyEvent', (y) => y
+    .option('body', {
+      alias: 'b',
+      default: '{}'
+    })
+    .option('path', {
+      alias: 'p',
+      default: '/'
+    })
+    .option('method', {
+      alias: 'm',
+      default: 'POST'
+    })
+    .option('authorization', {
+      alias: ['t', 'token'],
+      default: process.env.TOKEN || '12345abce'
+    })
+    .boolean(['no-auth'])
+    ,
+    outputJson(
+      ({ body, ...other }) => gatewayFactory.APIGatewayProxyEventFactory({
+        body: JSON.parse(body),
+        ...other
+      })
+    )
+  )
+
+  .demandCommand()
+  .argv;
+
+function outputJson(generatorFunc) {
+  return (argv) => console.log(
+    JSON.stringify(
+      generatorFunc(argv)
+    )
+  );
+}
