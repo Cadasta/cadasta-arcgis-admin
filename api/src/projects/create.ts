@@ -18,7 +18,7 @@ export default async (event: AWSLambda.APIGatewayProxyEvent): Promise<AWSLambda.
     console.log(`Creating project ${payload.name}`);
     project = await ProjectsDb.create(DOMAIN_NAME, payload.name, user);
   } catch (error) {
-    console.log(JSON.stringify(error));
+    console.error(JSON.stringify(error));
     return errResponse(
       {
         err: `[${error.code}] ${error.message}`,
@@ -35,7 +35,7 @@ export default async (event: AWSLambda.APIGatewayProxyEvent): Promise<AWSLambda.
     );
   } catch (error) {
     const e = error as ArcGisPortal.MultipleGroupsCreationError;
-    console.log(JSON.stringify(e));
+    console.error(JSON.stringify(e));
     // TODO: Rollback successfully created groups
     // TODO: If we don't rollback groups, we should maybe report which groups were created
     return errResponse(

@@ -6,6 +6,7 @@ import { Guard, guards } from '../auth/guards';
 import SignIn from '../auth/SignIn';
 import Home from '../home/Home';
 import CreateProject from '../projects/Create';
+import ListProjects from '../projects/List';
 import NoMatch from './NoMatch';
 
 export const urls: { [key: string]: string } = {
