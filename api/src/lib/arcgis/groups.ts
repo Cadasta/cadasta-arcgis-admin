@@ -40,11 +40,16 @@ export const createGroups = (
     )
     // Create group-creation promises
     .map(
-      (group): Promise<ArcGISGroup | ArcGISGroupCreationError> =>
-        createGroup({ group, authentication, })
-        .then((response: ArcGISCreateGroupResponse): ArcGISGroup => response.group)
-        // If creation fails, catch errors and return object of error and offending group
-        .catch((err: ArcGISRequestError) => ({ err, group }))
+      (group): Promise<ArcGISGroup | ArcGISGroupCreationError> => {
+        console.log(`Creating group ${group}`);
+        return createGroup({ group, authentication })
+          .then((response: ArcGISCreateGroupResponse): ArcGISGroup => response.group)
+          // If creation fails, catch errors and return object of error and offending group
+          .catch((err: ArcGISRequestError) => {
+            console.log(`Caught failure when trying to create ${group}: ${err}`);
+            return ({ err, group })
+          })
+      }
     )
   )
   // Combine array of successes and failures into single object

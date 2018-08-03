@@ -9,42 +9,40 @@ export default async (event: AWSLambda.APIGatewayProxyEvent): Promise<AWSLambda.
   } = requiredPick(process.env, 'ARCGIS_REST_URL', 'TABLE_NAME');
 
   const auth = new ArcGisPortal.Auth(ARCGIS_REST_URL, event.requestContext.authorizer.authorization);
-  const payload: ProjectCreateRequestBody = JSON.parse(event.body);
+  const { name, groups: groupShortNames }: ProjectCreateRequestBody = JSON.parse(event.body);
   const user = JSON.parse(event.requestContext.authorizer.user).username;
 
   let project: Project;
-  let groups: ArcGISGroup[];
+  let groups: ArcGISGroup[] = [];
   try {
-    console.log(`Creating project ${payload.name}`);
-    project = await ProjectsDb.create(DOMAIN_NAME, payload.name, user);
+    console.log(`Creating project ${name}`)
+    project = await ProjectsDb.create(DOMAIN_NAME, name, user);
   } catch (error) {
-    console.error(JSON.stringify(error));
-    return errResponse(
-      {
-        err: `[${error.code}] ${error.message}`,
-        msg: 'Failed to create project',
-      },
-      500
-    );
+    const msg = 'Failed to create project';
+    console.error(msg, JSON.stringify(error));
+    return errResponse({
+      msg,
+      err: `[${error.code}] ${error.message}`,
+    }, 500);
   }
 
-  try {
-    console.log(`Creating groups ${payload.groups}`);
-    groups = await ArcGisPortal.createGroups(
-      payload.groups, project.name, project.slug, auth
-    );
-  } catch (error) {
-    const e = error as ArcGisPortal.MultipleGroupsCreationError;
-    console.error(JSON.stringify(e));
-    // TODO: Rollback successfully created groups
-    // TODO: If we don't rollback groups, we should maybe report which groups were created
-    return errResponse(
-      {
-        err: e.failure.map(({ err }) => err.message),
-        msg: 'Failed to create groups',
-      },
-      500
-    );
+  if (groupShortNames.length) {
+    try {
+      console.log(`Creating groups ${groupShortNames}`)
+      groups = await ArcGisPortal.createGroups(
+        groupShortNames, project.name, project.slug, auth
+      );
+    } catch (error) {
+      const msg = 'Failed to create groups';
+      console.error(msg, JSON.stringify(error));
+      let err = error as ArcGisPortal.MultipleGroupsCreationError
+      // TODO: Rollback successfully created groups
+      // TODO: If we don't rollback groups, we should maybe report which groups were created
+      return errResponse({
+        msg,
+        err: err,
+      }, 500);
+    }
   }
 
   return response({ project, groups }, 201);
