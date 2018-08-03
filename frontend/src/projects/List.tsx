@@ -1,16 +1,21 @@
 import * as React from "react";
+import { MdRefresh } from "react-icons/md";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
-import { Breadcrumb, BreadcrumbItem, Button, Table } from "reactstrap";
+import { Alert, Breadcrumb, BreadcrumbItem, Button, Table } from "reactstrap";
 
 import { StoreState } from "../app/reducers";
 import { urls } from "../app/routes";
-import { ADMIN_API_PROJECT_URL } from "../config";
+import { isLoggedIn } from "../auth/guards";
 import { PageHeader } from "../shared/styled-components/PageHeader";
+import { ProjectsState } from "./projectsReducer";
+import { fetchProjects as fetchProjectsThunk } from "./projectsThunks";
 import { Project } from "./types";
 
 interface Props extends React.HTMLAttributes<HTMLElement> {
   token: string;
+  fetchProjects: typeof fetchProjectsThunk;
+  projects: ProjectsState;
 }
 interface State {
   projects: ReadonlyArray<Project>;
@@ -44,15 +49,15 @@ const ProjectsTable = ({ projects }: {projects: ReadonlyArray<Project>}) => (
 
 class List extends React.Component<Props, State> {
 
-  public readonly state: State = {
-    projects: []
-  };
-
   public componentDidMount() {
-    this.fetchProjects();
+    if (!this.props.projects.fetched) {
+      this.props.fetchProjects();
+    }
   }
 
   public render() {
+    const { fetchProjects } = this.props;
+    const { fetchError, fetching, projects } = this.props.projects;
     return (
       <div>
         <PageHeader>Projects</PageHeader>
@@ -60,31 +65,28 @@ class List extends React.Component<Props, State> {
           <BreadcrumbItem><Link to={urls.Home}>Home</Link></BreadcrumbItem>
           <BreadcrumbItem active>Projects</BreadcrumbItem>
         </Breadcrumb>
-        <Button color="primary" size="sm" className="mb-3" tag={Link} to={urls.CreateProject}>Create New</Button>
-        <ProjectsTable projects={this.state.projects} />
+        <Button color="primary" size="sm" className="mb-3" tag={Link} to={urls.CreateProject}>
+          Create New
+        </Button>
+        <Button outline color="secondary" size="sm" className="mb-3 float-right" disabled={ fetching } onClick={ fetchProjects }>
+          <MdRefresh style={{ verticalAlign: 'middle' }} className={ fetching ? "icon-spin" : "" } />
+        </Button>
+        {
+          fetchError &&
+          <Alert color="danger">
+            { fetchError }
+          </Alert>
+        }
+        <ProjectsTable projects={projects} />
       </div>
     );
   }
-  private fetchProjects() {
-    // TODO: Mv to Redux + Thunks
-    const options = {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${this.props.token}`
-      }
-    };
-    fetch(ADMIN_API_PROJECT_URL, options)
-      .then(resp => resp.json())
-      .then(({ results }) => results)
-      .then((projects: ReadonlyArray<Project>) => this.setState({ projects }))
-    ;
-  }
 }
 
-const mapStateToProps = ({ auth }: StoreState) => ({
-  token: auth && auth.token,
+const mapStateToProps = ({ auth, projects }: StoreState) => ({
+  token: isLoggedIn(auth) ? auth.token : undefined,
+  projects,
 });
-export default connect<{}, {}, React.HTMLAttributes<HTMLElement>>(
-  mapStateToProps,
-)(List);
+export default connect(mapStateToProps, {
+  fetchProjects: fetchProjectsThunk
+})(List);

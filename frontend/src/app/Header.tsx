@@ -1,7 +1,8 @@
-import * as React from 'react';
-import { connect, Dispatch } from 'react-redux';
-import { Link } from 'react-router-dom';
-import { Button, Navbar } from 'reactstrap';
+import * as React from "react";
+import { connect, Dispatch } from "react-redux";
+import { Link } from "react-router-dom";
+import { Button, Navbar } from "reactstrap";
+import { isLoggedIn as isLoggedInCheck } from '../auth/guards';
 
 import {
   AuthAction,
@@ -14,7 +15,7 @@ import { StoreState } from './reducers';
 
 export interface Props extends React.HTMLAttributes<HTMLElement> {
   isLoggedIn: boolean;
-  username: string;
+  username?: string;
   logout: () => LogoutAction;
 }
 const Header: React.SFC<Props> = ({ className = '', isLoggedIn, username, logout }) => (
@@ -36,8 +37,8 @@ const Header: React.SFC<Props> = ({ className = '', isLoggedIn, username, logout
 );
 
 const mapStateToProps = ({ auth }: StoreState) => ({
-  isLoggedIn: !!auth,
-  username: auth && auth.username
+  isLoggedIn: isLoggedInCheck(auth),
+  username: isLoggedInCheck(auth) ? auth.username : null
 });
 const mapDispatchToProps = (dispatch: Dispatch<AuthAction>) => ({
   logout: () => dispatch(logoutAction())

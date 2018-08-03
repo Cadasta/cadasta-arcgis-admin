@@ -6,3 +6,11 @@ export interface Project extends Readonly<{
   modified_by: string;
   modified_date: string;
 }>{};
+
+export type projectName = string;
+export type groupShortNames = string[];
+
+export interface CreateProjectRequest extends Readonly<{
+  name: projectName;
+  groups: groupShortNames;
+}>{};

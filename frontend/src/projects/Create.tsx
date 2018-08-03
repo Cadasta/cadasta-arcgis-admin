@@ -1,22 +1,25 @@
-import * as React from 'react';
-import { Checkbox, CheckboxGroup } from 'react-checkbox-group';
-import { connect, DispatchProp } from 'react-redux';
-import { Link, RouteProps } from 'react-router-dom';
-import { Breadcrumb, BreadcrumbItem, Button, Col, Form, FormGroup, FormText, Input, Label } from 'reactstrap';
+import * as React from "react";
+import { Checkbox, CheckboxGroup } from "react-checkbox-group";
+import { connect, DispatchProp } from "react-redux";
+import { Link, RouteProps } from "react-router-dom";
+import { Alert, Breadcrumb, BreadcrumbItem, Button, Col, Form, FormGroup, FormText, Input, Label } from "reactstrap";
 
-import { StoreState } from '../app/reducers';
-import { urls } from '../app/routes';
-import { ADMIN_API_PROJECT_URL } from '../config';
-import { PageHeader } from '../shared/styled-components/PageHeader';
+import { StoreState } from "../app/reducers";
+import { urls } from "../app/routes";
+import { isLoggedIn } from '../auth/guards';
+import { PageHeader } from "../shared/styled-components/PageHeader";
+import { ProjectsState } from "./projectsReducer";
+import { createProject as createProjectThunk } from "./projectsThunks";
+import { groupShortNames, projectName } from './types';
 
 interface Props extends RouteProps, DispatchProp {
   token: string;
+  createProject: typeof createProjectThunk;
+  projects: ProjectsState;
 }
 interface State {
-  projectName: string;
-  apiResponse?: object;
-  projectGroups: string[];
-  err: boolean;
+  projectName: projectName;
+  projectGroups: groupShortNames;
 }
 class Create extends React.Component<Props, State> {
   constructor(props: Props) {
@@ -26,12 +29,17 @@ class Create extends React.Component<Props, State> {
       projectGroups: ['PM', 'FS', 'DC', 'VW'],
       projectName: '',
     };
-    this.createProject = this.createProject.bind(this);
     this.handleName = this.handleName.bind(this);
     this.handleGroups = this.handleGroups.bind(this);
   }
 
   public render() {
+    const handleForm = (e: React.FormEvent<HTMLFormElement>) => {
+      e.preventDefault()
+      const { projectName: name, projectGroups: groups } = this.state;
+      this.props.createProject({ name, groups });
+    };
+    const { createError, creating } = this.props.projects;
     return (
       <React.Fragment>
         <PageHeader>Create Project</PageHeader>
@@ -40,8 +48,14 @@ class Create extends React.Component<Props, State> {
           <BreadcrumbItem><Link to={urls.ListProjects}>Projects</Link></BreadcrumbItem>
           <BreadcrumbItem active={true}>Create new project</BreadcrumbItem>
         </Breadcrumb>
-        <Form onSubmit={this.createProject}>
-          <FormGroup row={true}>
+        <Form onSubmit={handleForm}>
+          {
+            createError &&
+            <Alert color="danger">
+              { createError }
+            </Alert>
+          }
+          <FormGroup row>
             <Label for="projectName" sm={3}>Project name</Label>
             <Col sm={9}>
               <Input id="projectName" required={true} value={this.state.projectName} onChange={this.handleName} />
@@ -81,16 +95,12 @@ class Create extends React.Component<Props, State> {
           </FormGroup>
           <FormGroup row={true}>
             <Col sm={{ size: 9, offset: 3 }}>
-              <Button color="primary">Submit</Button>{' '}
+              <Button color="primary" disabled={creating}>
+                Submit
+              </Button>
             </Col>
           </FormGroup>
         </Form>
-        {
-          this.state.apiResponse &&
-          <code style={ this.state.err ? {border: '2px solid red'} : {} }>
-            { JSON.stringify(this.state.apiResponse) }
-          </code>
-        }
       </React.Fragment>
     );
   }
@@ -106,31 +116,12 @@ class Create extends React.Component<Props, State> {
       projectGroups: newProjectGroups
     });
   }
-
-  private createProject(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    // TODO: Mv to Redux + Thunks
-    const options = {
-      body: JSON.stringify({
-        groups: this.state.projectGroups,
-        name: this.state.projectName
-      }),
-      headers: {
-        'Authorization': `Bearer ${this.props.token}`,
-        'Content-Type': 'application/json',
-      },
-      method: 'POST'
-    };
-    fetch(ADMIN_API_PROJECT_URL, options)
-      .then(resp => resp.json())
-      .then(apiResponse => this.setState({apiResponse, err: false}))
-      .catch(apiResponse => this.setState({apiResponse, err: true}));
-  }
 }
 
-const mapStateToProps = ({ auth }: StoreState) => ({
-  token: auth && auth.token,
+const mapStateToProps = ({ auth, projects }: StoreState) => ({
+  token: isLoggedIn(auth) ? auth.token : undefined,
+  projects
 });
-export default connect<{}, {}, React.HTMLAttributes<HTMLElement>>(
-  mapStateToProps,
-)(Create);
+export default connect(mapStateToProps, {
+  createProject: createProjectThunk
+})(Create);
