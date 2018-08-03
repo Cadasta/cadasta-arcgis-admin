@@ -13,7 +13,7 @@
     "validate-template": "aws cloudformation validate-template --template-body file://template.yaml",
     "describe-stack": "aws cloudformation describe-stacks --stack-name $npm_package_name-${STAGE:-dev}",
     "dev-server": "nodemon --exec \"sam local start-api -n env.json\" --watch dist",
-    "lint": "./node_modules/tslint/bin/tslint --project tsconfig.json 'src/**/*.ts' 'src/**/*.tsx'"
+    "lint": "tslint --project tsconfig.json 'src/**/*.ts' 'src/**/*.tsx'"
   },
   "repository": {},
   "author": "",
