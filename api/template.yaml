@@ -63,6 +63,8 @@ Resources:
               responses: {}
               security:
                 - CustomAuthorizer: []
+            # TODO: If a request is made without the appropriate body, the response doesn't contain CORs
+            # headers and thus is never shown.
             post:
               summary: Create a new Projects
               requestBody:
@@ -71,7 +73,7 @@ Resources:
                   application/json:
                     schema:
                       $ref: '#/definitions/ProjectCreateRequestBodyModel'
-              x-amazon-apigateway-request-validator: all
+              x-amazon-apigateway-request-validator: body
               parameters:
               - in: body
                 name: ProjectCreateRequestBodyModel
@@ -90,14 +92,15 @@ Resources:
           ProjectCreateRequestBodyModel:
             type: object
             properties:
-              id:
-                type: string
-                format: uuicd
-                # readOnly: true
               name:
                 type: string
+              groups:
+                type: array
+                items:
+                  type: string
             required:
               - name
+              - groups
 
         x-amazon-apigateway-request-validators:
           all:
@@ -106,6 +109,9 @@ Resources:
           params-only:
             validateRequestBody: false
             validateRequestParameters: true
+          body:
+            validateRequestBody: true
+            validateRequestParameters: false
 
         x-amazon-apigateway-request-validator: params-only
 
