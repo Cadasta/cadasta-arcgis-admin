@@ -1,12 +1,21 @@
-export default async (
+import SentryWrapper from '../lib/sentry';
+
+const hello = async (
   event: AWSLambda.APIGatewayProxyEvent,
-): Promise<AWSLambda.APIGatewayProxyResult> => ({
-  body: JSON.stringify({
-    authorizer: {
-      user: JSON.parse(event.requestContext.authorizer.user),
-      username: event.requestContext.authorizer.principalId
-    },
-    msg: 'Hello world',
-  }),
-  statusCode: 200,
-});
+): Promise<AWSLambda.APIGatewayProxyResult> => {
+  console.log('Watch out an error will occur');
+  throw new Error('Shite, an Error happened');
+};
+
+// ({
+//   statusCode: 200,
+//   body: JSON.stringify({
+//     msg: 'Hello world',
+//     // authorizer: {
+//     //   username: event.requestContext.authorizer.principalId,
+//     //   user: JSON.parse(event.requestContext.authorizer.user)
+//     // }
+//   })
+// });
+
+export default SentryWrapper.handler(hello);
