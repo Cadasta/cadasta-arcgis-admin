@@ -31,7 +31,7 @@ interface User {
   provider: string;
   idpUsername?: null;
   units: string;
-  groups?: {
+  groups?: Array<{
     autoJoin: boolean;
     modified: number;
     sortOrder: string;
@@ -59,7 +59,7 @@ interface User {
     isFav: boolean;
     thumbnail?: string;
     phone?: null;
-  }[];
+  }>;
   userType: string;
   storageUsage: number;
   thumbnail: string;

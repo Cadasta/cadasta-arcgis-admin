@@ -1,14 +1,14 @@
-import * as React from "react";
-import Helmet from "react-helmet";
-import { BrowserRouter as Router } from "react-router-dom";
-import { Container } from "reactstrap";
+import * as React from 'react';
+import Helmet from 'react-helmet';
+import { BrowserRouter as Router } from 'react-router-dom';
+import { Container } from 'reactstrap';
 
-import "bootstrap/dist/css/bootstrap.min.css";
+import 'bootstrap/dist/css/bootstrap.min.css';
 
-import "./App.css";
-import Footer from "./Footer";
-import Header from "./Header";
-import { router } from "./routes";
+import './App.css';
+import Footer from './Footer';
+import Header from './Header';
+import { router } from './routes';
 
 class App extends React.Component {
   public render() {

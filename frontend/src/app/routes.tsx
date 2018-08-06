@@ -1,20 +1,20 @@
-import * as React from "react";
-import { Redirect, RouteComponentProps, RouteProps, Switch } from "react-router-dom";
+import * as React from 'react';
+import { Redirect, RouteComponentProps, RouteProps, Switch } from 'react-router-dom';
 
-import GuardedRoute from "../auth/GuardedRoute";
-import { Guard, guards } from "../auth/guards";
-import SignIn from "../auth/SignIn";
-import Home from "../home/Home";
-import CreateProject from "../projects/Create";
-import ListProjects from "../projects/List";
-import NoMatch from "./NoMatch";
+import GuardedRoute from '../auth/GuardedRoute';
+import { Guard, guards } from '../auth/guards';
+import SignIn from '../auth/SignIn';
+import Home from '../home/Home';
+import CreateProject from '../projects/Create';
+import ListProjects from '../projects/List';
+import NoMatch from './NoMatch';
 
 export const urls: { [key: string]: string } = {
-  Home: "/",
-  SignIn: "/auth/sign-in",
-  CreateProject: "/projects/create",
-  ListProjects: "/projects/list",
-  NoMatch: "nomatch"
+  CreateProject: '/projects/create',
+  Home: '/',
+  ListProjects: '/projects/list',
+  NoMatch: 'nomatch',
+  SignIn: '/auth/sign-in',
 };
 
 export interface RouteDeclaration extends RouteProps {
@@ -23,7 +23,6 @@ export interface RouteDeclaration extends RouteProps {
 const routeConfig: RouteDeclaration[] = [
   {
     /* Redirect any URL without trailing slash to endpoint with appended slash */
-    path: "/:url*",
     component: (props: RouteComponentProps<any>) => (
       <Redirect
         to={{
@@ -33,29 +32,30 @@ const routeConfig: RouteDeclaration[] = [
       />
     ),
     exact: true,
+    path: '/:url*',
     strict: true
   },
   {
-    path: urls.SignIn,
     component: SignIn,
-    exact: true
+    exact: true,
+    path: urls.SignIn,
   },
   {
-    path: urls.Home,
     component: Home,
     exact: true,
+    path: urls.Home,
   },
   {
-    path: urls.CreateProject,
+    checks: [guards.isLoggedIn],
     component: CreateProject,
     exact: true,
-    checks: [guards.isLoggedIn]
+    path: urls.CreateProject,
   },
   {
-    path: urls.ListProjects,
+    checks: [guards.isLoggedIn],
     component: ListProjects,
     exact: true,
-    checks: [guards.isLoggedIn]
+    path: urls.ListProjects,
   },
   {
     component: NoMatch

@@ -1,13 +1,13 @@
-import fetch from 'isomorphic-fetch';
 import AWSLambda from 'aws-lambda';
+import fetch from 'isomorphic-fetch';
 
-import { userResponseFactory, responseBodyFactory } from '../spec/factories';
+import { responseBodyFactory, userResponseFactory } from '../spec/factories';
 import handler from './authorizer';
 
 jest.mock('isomorphic-fetch');
 
 describe('API Gateway CustomAuthorizer', () => {
-  let _initialEnv: {[key: string]: string};
+  let initialEnv: {[key: string]: string};
   const eventBase: AWSLambda.CustomAuthorizerEvent = {
     authorizationToken: 'abcd12345',
     methodArn: 'example-arn',
@@ -16,12 +16,12 @@ describe('API Gateway CustomAuthorizer', () => {
   const mockFetch = fetch as jest.Mock;
 
   beforeEach(() => {
-    _initialEnv = process.env;
+    initialEnv = process.env;
     process.env.ARCGIS_REST_URL = 'https://mockPortal.com';
   });
 
   afterEach(() => {
-    process.env = _initialEnv;
+    process.env = initialEnv;
     mockFetch.mockReset();
   });
 
@@ -54,7 +54,7 @@ describe('API Gateway CustomAuthorizer', () => {
     mockFetch.mockResolvedValue(
       responseBodyFactory(
         userResponseFactory({
-          role: 'org_admin', disabled: false
+          disabled: false, role: 'org_admin'
         })
       )
     );
@@ -80,7 +80,7 @@ describe('API Gateway CustomAuthorizer', () => {
     mockFetch.mockResolvedValue(
       responseBodyFactory(
         userResponseFactory({
-          role: 'org_admin', disabled: true
+          disabled: true, role: 'org_admin'
         })
       )
     );
@@ -107,8 +107,8 @@ describe('API Gateway CustomAuthorizer', () => {
     mockFetch.mockResolvedValue(user);
     const resp = await handler(eventBase);
     expect(resp.context).toEqual({
-      user: await user.text(),
-      authorization: eventBase.authorizationToken
+      authorization: eventBase.authorizationToken,
+      user: await user.text()
     });
   });
 

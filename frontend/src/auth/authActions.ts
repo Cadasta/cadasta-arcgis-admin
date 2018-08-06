@@ -1,7 +1,7 @@
-import { AuthState } from "./authReducer";
+import { AuthState } from './authReducer';
 
 // Login
-export const LOGIN = "LOGIN";
+export const LOGIN = 'LOGIN';
 export type LOGIN = typeof LOGIN;
 export interface LoginAction {
   type: LOGIN;
@@ -13,7 +13,7 @@ export const login = (session: string): LoginAction => ({
 });
 
 // Logout
-export const LOGOUT = "LOGOUT";
+export const LOGOUT = 'LOGOUT';
 export type LOGOUT = typeof LOGOUT;
 export interface LogoutAction {
   type: LOGOUT;

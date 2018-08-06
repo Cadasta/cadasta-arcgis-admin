@@ -1,8 +1,8 @@
-import { Factory } from 'rosie';
-import Chance from 'chance';
 import { ArcGISRequestError } from '@esri/arcgis-rest-request';
+import Chance from 'chance';
+import { Factory } from 'rosie';
 
-import { responseBodyFactory } from './'
+import { responseBodyFactory } from './';
 
 const chance = new Chance();
 
@@ -37,13 +37,13 @@ export const ArcGISRequestErrorFactory = Factory.define<ArcGISRequestError>('Arc
   .attr('code', 'COM_0044')
   .attr('response', {
     'error': {
-      'messageCode': 'COM_0044',
-      'message': 'Unable to create group.',
       'code': 400,
       'details': [
         '\'title\' parameter must be specified.',
         '\'access\' parameter must be specified.'
-      ]
+      ],
+      'message': 'Unable to create group.',
+      'messageCode': 'COM_0044',
     }
   })
   .attr('url', 'https://maps.cadasta.org/arcgis/sharing/rest/community/createGroup')
@@ -62,8 +62,8 @@ export const ArcGISRequestErrorFactory = Factory.define<ArcGISRequestError>('Arc
 ;
 
 export const userResponseFactory = (userDetails = {}) => ({
-  username: 'factoryUser',
-  role: 'org_admin',
   disabled: false,
+  role: 'org_admin',
+  username: 'factoryUser',
   ...userDetails
 });

@@ -1,12 +1,12 @@
-import { UserSession } from "@esri/arcgis-rest-auth";
+import { UserSession } from '@esri/arcgis-rest-auth';
 
-import { ARCGIS_CLIENT_ID, ARCGIS_PORTAL_URL } from "../config";
+import { ARCGIS_CLIENT_ID, ARCGIS_PORTAL_URL } from '../config';
 
-export const startOAuth2Flow = (nextEndpoint: string = "/") =>
+export const startOAuth2Flow = (nextEndpoint: string = '/') =>
   UserSession.beginOAuth2({
     clientId: ARCGIS_CLIENT_ID,
-    portal: ARCGIS_PORTAL_URL,
     popup: false,
+    portal: ARCGIS_PORTAL_URL,
     // A redirect may send a user to this view if they were not logged in. That redirect
     // should add a 'next' property to the path's state. This is used to dictate where
     // the ArcGIS Portal sends a user upon successfully authenticating. Defaults to root.
@@ -18,7 +18,7 @@ export const completeOAuth2Flow = () =>
     clientId: ARCGIS_CLIENT_ID,
     portal: ARCGIS_PORTAL_URL,
     redirectUri: window.location.origin
-  }).serialize()
+  }).serialize();
 
 export const isCompletingLogin = (): boolean => {
   return !!window.location.href.match(

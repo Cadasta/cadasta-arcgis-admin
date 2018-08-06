@@ -1,18 +1,18 @@
-import { combineReducers } from "redux";
-import { compose, createStore } from "redux";
-import { PersistConfig, persistReducer, persistStore } from "redux-persist";
-import storage from "redux-persist/lib/storage";
+import { combineReducers } from 'redux';
+import { compose, createStore } from 'redux';
+import { PersistConfig, persistReducer, persistStore } from 'redux-persist';
+import storage from 'redux-persist/lib/storage';
 
-import { AuthAction } from "../auth/authActions";
-import { authReducer, AuthState } from "../auth/authReducer";
-import { CustomWindow } from "../shared/custom.window";
+import { AuthAction } from '../auth/authActions';
+import { authReducer, AuthState } from '../auth/authReducer';
+import { CustomWindow } from '../shared/custom.window';
 declare let window: CustomWindow;
 
 // Reducers
 export const rootReducer = combineReducers({
   auth: authReducer
 });
-const persistConfig: PersistConfig = { key: "root", storage };
+const persistConfig: PersistConfig = { key: 'root', storage };
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
 // Initial State

@@ -1,4 +1,4 @@
-import { AuthAction, LOGIN, LOGOUT } from "./authActions";
+import { AuthAction, LOGIN, LOGOUT } from './authActions';
 
 export interface AuthState {
   clientId: string;
@@ -10,11 +10,13 @@ export interface AuthState {
   refreshTokenTTL: number;
 }
 
-export function authReducer(state: AuthState | null=null, action: AuthAction): AuthState | null {
+export function authReducer(state: AuthState | null = null, action: AuthAction): AuthState | null {
   switch (action.type) {
     case LOGIN:
       return action.value;
     case LOGOUT:
+      return null;
+    default:
       return null;
   }
   return state;

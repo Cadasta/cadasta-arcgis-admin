@@ -1,7 +1,7 @@
 export function pick<T, K extends keyof T>(obj: T, ...keys: K[]): Pick<T, K> {
   const ret: any = {};
   keys.forEach((key: K) => {
-    ret[key] = obj[key]
+    ret[key] = obj[key];
   });
   return ret;
 }
@@ -15,4 +15,4 @@ export function requiredPick<T, K extends keyof T>(obj: T, ...keys: K[]): Pick<T
     throw new Error(`ERROR: Required keys are unset: ${unsetKeys.join(', ')}`);
   }
   return ret;
-};
+}

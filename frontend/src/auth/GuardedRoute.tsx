@@ -1,12 +1,12 @@
-import * as React from "react";
-import { connect, Dispatch } from "react-redux";
-import { Redirect, Route } from "react-router-dom";
+import * as React from 'react';
+import { connect, Dispatch } from 'react-redux';
+import { Redirect, Route } from 'react-router-dom';
 
-import { StoreState } from "../app/reducers";
-import { RouteDeclaration, urls } from "../app/routes";
-import { AuthAction, login, LoginAction } from "./authActions";
-import { Guard } from "./guards";
-import { completeOAuth2Flow, isCompletingLogin } from "./oauth2";
+import { StoreState } from '../app/reducers';
+import { RouteDeclaration, urls } from '../app/routes';
+import { AuthAction, login, LoginAction } from './authActions';
+import { Guard } from './guards';
+import { completeOAuth2Flow, isCompletingLogin } from './oauth2';
 
 export interface GuardedRouteProps extends RouteDeclaration {
   state: StoreState;
@@ -24,7 +24,7 @@ const GuardedRoute: React.SFC<GuardedRouteProps> = ({
   if (isCompletingLogin()) {
     loginUser(completeOAuth2Flow());
     const renderRedirect = (props: any) => (
-      <Redirect to={{ pathname: rest.path || "/" }} />
+      <Redirect to={{ pathname: rest.path || '/' }} />
     );
     return <Route {...rest} render={renderRedirect} />;
   }

@@ -1,8 +1,8 @@
 import { IAuthenticationManager } from '@esri/arcgis-rest-request';
 
 export class Auth implements IAuthenticationManager {
-  public  portal: string
-  private token: string
+  public  portal: string;
+  private token: string;
 
   constructor(portal: string, token: string) {
     this.portal = portal;

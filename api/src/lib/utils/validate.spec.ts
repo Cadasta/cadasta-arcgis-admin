@@ -9,12 +9,12 @@ describe('requiredPick()', () => {
   });
   it('error on empty string values', async () => {
     expect(() => {
-      requiredPick({'foo': ''}, 'foo')
+      requiredPick({'foo': ''}, 'foo');
     }).toThrow(`${errBase} foo`);
   });
   it('error on undefined values', async () => {
     expect(() => {
-      requiredPick({'foo': undefined}, 'foo')
+      requiredPick({'foo': undefined}, 'foo');
     }).toThrow(`${errBase} foo`);
   });
 });

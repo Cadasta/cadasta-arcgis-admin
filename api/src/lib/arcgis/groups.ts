@@ -7,19 +7,20 @@ import { Auth } from './authentication';
 interface ArcGISGroupCreationError {
   err: ArcGISRequestError;
   group: ArcGISCreateGroupRequest;
-};
+}
 export interface MultipleGroupsCreationError {
-  success: ArcGISGroup[],
-  failure: ArcGISGroupCreationError[]
+  success: ArcGISGroup[];
+  failure: ArcGISGroupCreationError[];
 }
 const groupNames: {[K in GroupNameShort]: string} = {
-  PM: 'Project managers',
-  FS: 'Field supervisors',
   DC: 'Data Collectors',
+  FS: 'Field supervisors',
+  PM: 'Project managers',
   VW: 'Viewers'
-}
+};
 
-const isError = (obj: ArcGISGroup | ArcGISGroupCreationError): obj is ArcGISGroupCreationError => !!(obj as ArcGISGroupCreationError).err
+const isError = (obj: ArcGISGroup | ArcGISGroupCreationError): 
+  obj is ArcGISGroupCreationError => !!(obj as ArcGISGroupCreationError).err;
 
 export const createGroups = (
   groupNameKeys: GroupNameShort[],
@@ -31,10 +32,10 @@ export const createGroups = (
     // Create ArcGIS request input
     .map(
       (groupNameKey): ArcGISCreateGroupRequest => ({
-        title: `${projectName}: ${groupNames[groupNameKey]}`,
-        tags: [`project:${projectSlug}`],
         access: 'private',
         owner: null,
+        tags: [`project:${projectSlug}`],
+        title: `${projectName}: ${groupNames[groupNameKey]}`,
       })
     )
     // Create group-creation promises
@@ -50,8 +51,8 @@ export const createGroups = (
   .then(
     (responses): MultipleGroupsCreationError => responses.reduce(
       (output: MultipleGroupsCreationError, result) => ({
-        success: output.success.concat(isError(result) ? [] : [result]),
-        failure: output.failure.concat(isError(result) ? [result] : [])
+        failure: output.failure.concat(isError(result) ? [result] : []),
+        success: output.success.concat(isError(result) ? [] : [result])
       }),
       { success: [], failure: [] }
     )
@@ -59,8 +60,8 @@ export const createGroups = (
   // Reject promise if there are any errors
   .then(
     (response): ArcGISGroup[] => {
-      if (response.failure.length) { throw response }
-      return response.success
+      if (response.failure.length) { throw response; }
+      return response.success;
     }
   )
 );

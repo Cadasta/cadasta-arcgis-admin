@@ -21,20 +21,20 @@ export default async ({ authorizationToken: Authorization, methodArn: Resource }
   // https://aws.amazon.com/blogs/compute/using-enhanced-request-authorizers-in-amazon-api-gateway/
   const permitted: boolean = (user.role === 'org_admin') && user.disabled === false;
   return {
-    principalId: user.username,
+    context: {
+      authorization: Authorization,
+      user: JSON.stringify(user)
+    },
     policyDocument: {
-      Version: '2012-10-17',
       Statement: [
         {
           Action: 'execute-api:Invoke',
           Effect: permitted ? 'Allow' : 'Deny',
           Resource
         }
-      ]
+      ],
+      Version: '2012-10-17',
     },
-    context: {
-      user: JSON.stringify(user),
-      authorization: Authorization
-    }
-  }
+    principalId: user.username
+  };
 };

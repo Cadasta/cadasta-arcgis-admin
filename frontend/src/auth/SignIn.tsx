@@ -1,9 +1,9 @@
-import * as React from "react";
-import { RouteComponentProps } from "react-router";
-import { Button, Col } from "reactstrap";
+import * as React from 'react';
+import { RouteComponentProps } from 'react-router';
+import { Button, Col } from 'reactstrap';
 
-import { PageHeader } from "../shared/styled-components/PageHeader";
-import { startOAuth2Flow } from "./oauth2";
+import { PageHeader } from '../shared/styled-components/PageHeader';
+import { startOAuth2Flow } from './oauth2';
 
 interface Props extends RouteComponentProps<any> {}
 const SignIn: React.SFC<Props> = ({location}) => {
@@ -30,5 +30,5 @@ const SignIn: React.SFC<Props> = ({location}) => {
       </div>
     </div>
   );
-}
+};
 export default SignIn;

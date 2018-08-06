@@ -1,4 +1,4 @@
-import { StoreState } from "../app/reducers";
+import { StoreState } from '../app/reducers';
 
 export type Guard = (state: StoreState) => boolean;
 export const guards: { [name: string]: Guard } = {
