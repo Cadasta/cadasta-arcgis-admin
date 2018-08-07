@@ -3,6 +3,7 @@ const { readFileSync } = require('fs');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const { yamlParse } = require('yaml-cfn');
 const SentryPlugin = require('@sentry/webpack-plugin');
+const ChildProcess = require('child_process');
 
 const conf = {
   prodMode: process.env.NODE_ENV === 'production',
@@ -64,7 +65,7 @@ module.exports = {
       sourceMap: true,
     }),
     new SentryPlugin({
-      release: 'dev',
+      release: ChildProcess.execSync('git rev-parse HEAD').toString().trim(),
       include: './dist',
       ignore: ['node_modules', 'webpack.config.js'],
     }),

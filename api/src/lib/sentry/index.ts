@@ -31,7 +31,7 @@ export default class SentryWrapper {
     Raven.config(process.env.SENTRY_DSN, {
       dataCallback: getSourceMaps,
       environment: process.env.SENTRY_ENV,
-      release: 'dev'
+      release: process.env.RELEASE
     }).install();
 
     return async (event: AWSLambda.APIGatewayProxyEvent) => {

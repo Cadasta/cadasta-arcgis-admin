@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 echo "Reading .env ..."
+export RELEASE=$(git rev-parse HEAD)
 while read -r line 
 do 
     echo "$line"
