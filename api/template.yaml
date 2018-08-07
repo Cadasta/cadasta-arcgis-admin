@@ -6,12 +6,16 @@ Description: An API to handle the management of our ArcGIS Enterprise Portal.
 Parameters:
   Stage:
     Type: String
+  SentryDsn:
+    Type: String
 
 Globals:
   Function:
     Environment:
       Variables:
         ARCGIS_REST_URL: https://maps.cadasta.org/arcgis/sharing/rest
+        SENTRY_ENV: !Sub ${Stage}
+        SENTRY_DSN: !Sub ${SentryDsn}
   Api:
     # enable CORS; to make more specific, change the origin wildcard
     # to a particular domain name, e.g. "'www.example.com'"
@@ -143,7 +147,7 @@ Resources:
     Properties:
       Handler: projects/create.default
       Runtime: nodejs8.10
-      CodeUri: ./dist
+      CodeUri: ./dist/projects
       Timeout: 5
       Policies:
         - Version: 2012-10-17
@@ -169,7 +173,7 @@ Resources:
     Properties:
       Handler: projects/list.default
       Runtime: nodejs8.10
-      CodeUri: ./dist
+      CodeUri: ./dist/projects
       Timeout: 5
       Policies:
         - Version: 2012-10-17

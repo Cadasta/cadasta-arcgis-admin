@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+echo "Reading .env ..."
+while read -r line 
+do 
+    echo "$line"
+    export $line
+done < ".env"

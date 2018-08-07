@@ -1,3 +1,4 @@
+import * as path from 'path';
 import Raven from 'raven';
 
 const parseUser = (event: AWSLambda.APIGatewayProxyEvent): SentryUser => {
@@ -14,10 +15,23 @@ const parseUser = (event: AWSLambda.APIGatewayProxyEvent): SentryUser => {
   return user;
 };
 
+const getSourceMaps = (data: any) => {
+  const stacktrace: any = data.exception && data.exception[0].stacktrace;
+  if (stacktrace && stacktrace.frames) {
+    stacktrace.frames.forEach((frame: any) => {
+      frame.filename = 'app:///' + path.relative('/var/task/', frame.filename);
+    });
+  }
+  return data;
+};
+
 export default class SentryWrapper {
   public static handler(lambdaHandler: any) {
+    console.log(process.env.SENTRY_DSN);
     Raven.config(process.env.SENTRY_DSN, {
-      environment: process.env.SENTRY_ENV
+      dataCallback: getSourceMaps,
+      environment: process.env.SENTRY_ENV,
+      release: 'dev'
     }).install();
 
     return async (event: AWSLambda.APIGatewayProxyEvent) => {

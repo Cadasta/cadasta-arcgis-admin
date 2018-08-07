@@ -64,7 +64,15 @@ Custom per-environment configuration is provided to the application via environm
 
 ### Prerequisites
 
-Install [`aws-sam-cli`](https://github.com/awslabs/aws-sam-cli)
+- Install [`aws-sam-cli`](https://github.com/awslabs/aws-sam-cli)
+- Deployment uploads source maps to Sentry for error tracking; we need to configure `.sentryclirc`: 
+  1. Copy `.sentryclirc.example` to `.sentryclirc`
+  2. [Create a new API token](https://sentry.io/settings/account/api/auth-tokens/) for your account; make sure it has `project:write` permission
+  3. Add the token to `.sentryclirc` under `[auth]`
+- The Lambda functions need to be configured with the required env variables:
+  1. Copy `.env.example` to `.env`
+  2. Get the [Sentry DSN](https://sentry.io/settings/cadasta/arcgis-admin/keys/).
+  3. Add the DSN to the `.env` config
 
 ### Deploy steps
 

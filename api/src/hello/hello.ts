@@ -4,7 +4,7 @@ const hello = async (
   event: AWSLambda.APIGatewayProxyEvent,
 ): Promise<AWSLambda.APIGatewayProxyResult> => {
   console.log('Watch out an error will occur');
-  throw new Error('Shite, an Error happened');
+  throw new Error('An Error happened');
 };
 
 // ({

@@ -2,6 +2,7 @@ const path = require('path');
 const { readFileSync } = require('fs');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const { yamlParse } = require('yaml-cfn');
+const SentryPlugin = require('@sentry/webpack-plugin');
 
 const conf = {
   prodMode: process.env.NODE_ENV === 'production',
@@ -39,6 +40,7 @@ module.exports = {
   entry: entries,
   target: 'node',
   mode: conf.prodMode ? 'production' : 'development',
+  devtool: 'source-map',
   module: {
     rules: [
       {
@@ -60,6 +62,11 @@ module.exports = {
       parallel: true,
       extractComments: true,
       sourceMap: true,
+    }),
+    new SentryPlugin({
+      release: 'dev',
+      include: './dist',
+      ignore: ['node_modules', 'webpack.config.js'],
     }),
   ] : [],
 };
