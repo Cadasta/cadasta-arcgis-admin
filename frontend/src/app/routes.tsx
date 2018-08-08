@@ -1,13 +1,12 @@
 import * as React from 'react';
 import { Redirect, RouteComponentProps, RouteProps, Switch } from 'react-router-dom';
 
-import GuardedRoute from '../auth/GuardedRoute';
-import { Guard, guards } from '../auth/guards';
-import SignIn from '../auth/SignIn';
-import Home from '../home/Home';
-import CreateProject from '../projects/Create';
-import ListProjects from '../projects/List';
-import NoMatch from './NoMatch';
+import GuardedRoute from "../auth/GuardedRoute";
+import { Guard, guards } from "../auth/guards";
+import SignIn from "../auth/SignIn";
+import Home from "../home/Home";
+import { CreateProject, ListProjects } from "../projects";
+import NoMatch from "./NoMatch";
 
 export const urls: { [key: string]: string } = {
   CreateProject: '/projects/create',
