@@ -1,16 +1,16 @@
-import * as React from "react";
-import { MdRefresh } from "react-icons/md";
-import { connect } from "react-redux";
-import { Link } from "react-router-dom";
-import { Alert, Breadcrumb, BreadcrumbItem, Button, Table } from "reactstrap";
+import * as React from 'react';
+import { MdRefresh } from 'react-icons/md';
+import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
+import { Alert, Breadcrumb, BreadcrumbItem, Button, Table } from 'reactstrap';
 
-import { StoreState } from "../app/reducers";
-import { urls } from "../app/routes";
-import { isLoggedIn } from "../auth/guards";
-import { PageHeader } from "../shared/styled-components/PageHeader";
-import { ProjectsState } from "./projectsReducer";
-import { fetchProjects as fetchProjectsThunk } from "./projectsThunks";
-import { Project } from "./types";
+import { StoreState } from '../app/reducers';
+import { urls } from '../app/routes';
+import { isLoggedIn } from '../auth/guards';
+import { PageHeader } from '../shared/styled-components/PageHeader';
+import { ProjectsState } from './projectsReducer';
+import { fetchProjects as fetchProjectsThunk } from './projectsThunks';
+import { Project } from './types';
 
 interface Props extends React.HTMLAttributes<HTMLElement> {
   token: string;
@@ -22,7 +22,7 @@ interface State {
 }
 
 const ProjectsTable = ({ projects }: {projects: ReadonlyArray<Project>}) => (
-  <Table hover>
+  <Table hover={true}>
     <thead>
       <tr>
         <th>Project Name</th>
@@ -63,13 +63,20 @@ class List extends React.Component<Props, State> {
         <PageHeader>Projects</PageHeader>
         <Breadcrumb>
           <BreadcrumbItem><Link to={urls.Home}>Home</Link></BreadcrumbItem>
-          <BreadcrumbItem active>Projects</BreadcrumbItem>
+          <BreadcrumbItem active={true}>Projects</BreadcrumbItem>
         </Breadcrumb>
         <Button color="primary" size="sm" className="mb-3" tag={Link} to={urls.CreateProject}>
           Create New
         </Button>
-        <Button outline color="secondary" size="sm" className="mb-3 float-right" disabled={ fetching } onClick={ fetchProjects }>
-          <MdRefresh style={{ verticalAlign: 'middle' }} className={ fetching ? "icon-spin" : "" } />
+        <Button
+          outline={true}
+          color="secondary"
+          size="sm"
+          className="mb-3 float-right"
+          disabled={ fetching }
+          onClick={ fetchProjects }
+        >
+          <MdRefresh style={{ verticalAlign: 'middle' }} className={ fetching ? 'icon-spin' : '' } />
         </Button>
         {
           fetchError &&
@@ -84,8 +91,8 @@ class List extends React.Component<Props, State> {
 }
 
 const mapStateToProps = ({ auth, projects }: StoreState) => ({
-  token: isLoggedIn(auth) ? auth.token : undefined,
   projects,
+  token: isLoggedIn(auth) ? auth.token : undefined,
 });
 export default connect(mapStateToProps, {
   fetchProjects: fetchProjectsThunk

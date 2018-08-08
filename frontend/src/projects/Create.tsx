@@ -1,15 +1,15 @@
-import * as React from "react";
-import { Checkbox, CheckboxGroup } from "react-checkbox-group";
-import { connect, DispatchProp } from "react-redux";
-import { Link, RouteProps } from "react-router-dom";
-import { Alert, Breadcrumb, BreadcrumbItem, Button, Col, Form, FormGroup, FormText, Input, Label } from "reactstrap";
+import * as React from 'react';
+import { Checkbox, CheckboxGroup } from 'react-checkbox-group';
+import { connect, DispatchProp } from 'react-redux';
+import { Link, RouteProps } from 'react-router-dom';
+import { Alert, Breadcrumb, BreadcrumbItem, Button, Col, Form, FormGroup, FormText, Input, Label } from 'reactstrap';
 
-import { StoreState } from "../app/reducers";
-import { urls } from "../app/routes";
+import { StoreState } from '../app/reducers';
+import { urls } from '../app/routes';
 import { isLoggedIn } from '../auth/guards';
-import { PageHeader } from "../shared/styled-components/PageHeader";
-import { ProjectsState } from "./projectsReducer";
-import { createProject as createProjectThunk } from "./projectsThunks";
+import { PageHeader } from '../shared/styled-components/PageHeader';
+import { ProjectsState } from './projectsReducer';
+import { createProject as createProjectThunk } from './projectsThunks';
 import { groupShortNames, projectName } from './types';
 
 interface Props extends RouteProps, DispatchProp {
@@ -22,20 +22,15 @@ interface State {
   projectGroups: groupShortNames;
 }
 class Create extends React.Component<Props, State> {
-  constructor(props: Props) {
-    super(props);
-    this.state = {
-      err: false,
-      projectGroups: ['PM', 'FS', 'DC', 'VW'],
-      projectName: '',
-    };
-    this.handleName = this.handleName.bind(this);
-    this.handleGroups = this.handleGroups.bind(this);
-  }
+
+  public readonly state: State = {
+    projectGroups: ['PM', 'FS', 'DC', 'VW'],
+    projectName: '',
+  };
 
   public render() {
     const handleForm = (e: React.FormEvent<HTMLFormElement>) => {
-      e.preventDefault()
+      e.preventDefault();
       const { projectName: name, projectGroups: groups } = this.state;
       this.props.createProject({ name, groups });
     };
@@ -55,7 +50,7 @@ class Create extends React.Component<Props, State> {
               { createError }
             </Alert>
           }
-          <FormGroup row>
+          <FormGroup row={true}>
             <Label for="projectName" sm={3}>Project name</Label>
             <Col sm={9}>
               <Input id="projectName" required={true} value={this.state.projectName} onChange={this.handleName} />
@@ -105,7 +100,7 @@ class Create extends React.Component<Props, State> {
     );
   }
 
-  private handleName(event: React.FormEvent<HTMLInputElement>) {
+  private handleName = (event: React.FormEvent<HTMLInputElement>) => {
     this.setState({
       projectName: event.currentTarget.value
     });
@@ -119,8 +114,8 @@ class Create extends React.Component<Props, State> {
 }
 
 const mapStateToProps = ({ auth, projects }: StoreState) => ({
+  projects,
   token: isLoggedIn(auth) ? auth.token : undefined,
-  projects
 });
 export default connect(mapStateToProps, {
   createProject: createProjectThunk

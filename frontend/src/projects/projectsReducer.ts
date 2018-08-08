@@ -1,10 +1,10 @@
-import { Reducer } from "redux";
-import { persistReducer } from "redux-persist";
-import storage from "redux-persist/lib/storage";
-import { getType } from "typesafe-actions";
+import { Reducer } from 'redux';
+import { persistReducer } from 'redux-persist';
+import storage from 'redux-persist/lib/storage';
+import { getType } from 'typesafe-actions';
 
-import { createProject, fetchProjects, ProjectActions} from "./projectsActions";
-import { Project } from "./types";
+import { createProject, fetchProjects, ProjectActions } from './projectsActions';
+import { Project } from './types';
 
 export interface ProjectsState {
   projects: ReadonlyArray<Project>;
@@ -16,41 +16,39 @@ export interface ProjectsState {
 }
 
 export const defaultState: ProjectsState = {
-  projects: [],
-  fetching: false,
-  fetched: false,
   creating: false,
-}
-
+  fetched: false,
+  fetching: false,
+  projects: [],
+};
 
 const errTranslations = {
-  'Failed to fetch': "Unable to contact backend"
-}
+  'Failed to fetch': 'Unable to contact backend'
+};
 const translateErr = (translations: {[errMsg: string]: string}, errMsg: string): string =>
   translations[errMsg] || errMsg;
 
-export const projectsReducer = (state: ProjectsState=defaultState, action: ProjectActions): ProjectsState => {
+export const projectsReducer = (state: ProjectsState = defaultState, action: ProjectActions): ProjectsState => {
   switch (action.type) {
     // Fetch Projects
     case getType(fetchProjects.request):
       return {
         ...state,
-        fetching: true,
         fetchError: undefined,
+        fetching: true,
       };
     case getType(fetchProjects.failure):
       return {
         ...state,
+        fetchError: translateErr(errTranslations, action.payload.message),
         fetching: false,
-        fetchError: translateErr(
-          errTranslations, action.payload.message),
       };
     case getType(fetchProjects.success):
       return {
         ...state,
+        fetchError: undefined,
         fetched: true,
         fetching: false,
-        fetchError: undefined,
         projects: action.payload,
       };
 
@@ -58,29 +56,30 @@ export const projectsReducer = (state: ProjectsState=defaultState, action: Proje
     case getType(createProject.request):
       return {
         ...state,
-        creating: true,
         createError: undefined,
+        creating: true,
       };
     case getType(createProject.failure):
       return {
         ...state,
+        createError: translateErr(errTranslations, action.payload.message),
         creating: false,
-        createError: translateErr(
-          errTranslations, action.payload.message),
       };
     case getType(createProject.success):
       return {
         ...state,
-        creating: false,
         createError: undefined,
+        creating: false,
         projects: state.projects.concat(action.payload),
       };
-  }
-  return state;
-}
 
-const whitelist: Array<keyof ProjectsState> = ["projects"];
+    default:
+      return defaultState;
+  }
+};
+
+const whitelist: Array<keyof ProjectsState> = ['projects'];
 export default persistReducer(
-  { key: "projects", storage, whitelist },
+  { key: 'projects', storage, whitelist },
   projectsReducer
 ) as Reducer;

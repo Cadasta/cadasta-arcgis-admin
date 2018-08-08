@@ -1,5 +1,5 @@
-import { StoreState } from "../app/reducers";
-import { AuthState, PopulatedAuthState } from "./authReducer";
+import { StoreState } from '../app/reducers';
+import { AuthState, PopulatedAuthState } from './authReducer';
 
 export const isLoggedIn = (state: AuthState | StoreState): state is PopulatedAuthState => (
   ('auth' in state) ? ('token' in state.auth) : ('token' in state)

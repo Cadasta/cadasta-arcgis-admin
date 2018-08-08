@@ -1,7 +1,7 @@
-import { Reducer } from "redux";
-import { persistReducer } from "redux-persist";
-import storage from "redux-persist/lib/storage";
-import { AuthAction, LOGIN, LOGOUT } from "./authActions";
+import { Reducer } from 'redux';
+import { persistReducer } from 'redux-persist';
+import storage from 'redux-persist/lib/storage';
+import { AuthAction, LOGIN, LOGOUT } from './authActions';
 
 export interface PopulatedAuthState {
   clientId: string;
@@ -11,22 +11,23 @@ export interface PopulatedAuthState {
   portal: string;
   tokenDuration: number;
   refreshTokenTTL: number;
-};
+}
 export type AuthState = PopulatedAuthState | {};
 
 export const defaultState: AuthState = {};
 
-export function authReducer(state: AuthState=defaultState, action: AuthAction): AuthState {
+export function authReducer(state: AuthState = defaultState, action: AuthAction): AuthState {
   switch (action.type) {
     case LOGIN:
       return action.value;
     case LOGOUT:
       return {};
+    default:
+      return state;
   }
-  return state;
 }
 
 export default persistReducer(
-  { key: "auth", storage },
+  { key: 'auth', storage },
   authReducer
 ) as Reducer;
