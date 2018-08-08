@@ -19,7 +19,7 @@ const groupNames: {[K in GroupNameShort]: string} = {
   VW: 'Viewers'
 };
 
-const isError = (obj: ArcGISGroup | ArcGISGroupCreationError): 
+const isError = (obj: ArcGISGroup | ArcGISGroupCreationError):
   obj is ArcGISGroupCreationError => !!(obj as ArcGISGroupCreationError).err;
 
 export const createGroups = (
@@ -47,8 +47,8 @@ export const createGroups = (
           // If creation fails, catch errors and return object of error and offending group
           .catch((err: ArcGISRequestError) => {
             console.log(`Caught failure when trying to create ${group}: ${err}`);
-            return ({ err, group })
-          })
+            return ({ err, group });
+          });
       }
     )
   )

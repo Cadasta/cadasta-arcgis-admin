@@ -28,8 +28,8 @@ describe('Project Create API', () => {
   });
   const event: AWSLambda.APIGatewayProxyEvent = APIGatewayProxyEventFactory({
     body: {
+      groups: ['PM'],
       name: 'Congo Project',
-      groups: ['PM']
     }
   });
 
@@ -58,7 +58,7 @@ describe('Project Create API', () => {
   });
 
   it('should return server error if project creation fails', async () => {
-    consoleSpy = jest.spyOn(console, "error").mockImplementation(() => null)
+    consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => null);
 
     const error = AWSErrorFactory.build();
     mockCreateProjects.mockRejectedValue(error);
@@ -76,7 +76,7 @@ describe('Project Create API', () => {
   });
 
   it('should return server error if group creation fails', async () => {
-    consoleSpy = jest.spyOn(console, "error").mockImplementation(() => null)
+    consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => null);
 
     const project = ProjectFactory.build();
     mockCreateProjects.mockResolvedValue(project);

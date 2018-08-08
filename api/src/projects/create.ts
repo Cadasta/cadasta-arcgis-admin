@@ -15,33 +15,33 @@ export default async (event: AWSLambda.APIGatewayProxyEvent): Promise<AWSLambda.
   let project: Project;
   let groups: ArcGISGroup[] = [];
   try {
-    console.log(`Creating project ${name}`)
+    console.log(`Creating project ${name}`);
     project = await ProjectsDb.create(DOMAIN_NAME, name, user);
   } catch (error) {
     const msg = 'Failed to create project';
     console.error(msg, JSON.stringify(error, null, 2));
-    return errResponse({
-      msg,
-      err: `[${error.code}] ${error.message}`,
-    }, 500);
+    return errResponse(
+      { msg, err: `[${error.code}] ${error.message}` },
+      500
+    );
   }
 
   if (groupShortNames.length) {
     try {
-      console.log(`Creating groups ${groupShortNames}`)
+      console.log(`Creating groups ${groupShortNames}`);
       groups = await ArcGisPortal.createGroups(
         groupShortNames, project.name, project.slug, auth
       );
     } catch (error) {
       const msg = 'Failed to create groups';
       console.error(msg, JSON.stringify(error, null, 2));
-      let err = error as ArcGisPortal.MultipleGroupsCreationError
+      const err = error as ArcGisPortal.MultipleGroupsCreationError;
       // TODO: Rollback successfully created groups
       // TODO: If we don't rollback groups, we should maybe report which groups were created
-      return errResponse({
-        msg,
-        err: err.failure.map(e => e.err.message),
-      }, 500);
+      return errResponse(
+        { err: err.failure.map(e => e.err.message), msg },
+        500
+      );
     }
   }
 
