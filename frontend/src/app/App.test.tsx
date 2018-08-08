@@ -9,10 +9,7 @@ const mockStore = configureStore([]);
 
 it('renders without crashing', () => {
   const store = mockStore({
-    cognito: {
-      groups: []
-    },
-    tenants: {},
+    auth: {}
   });
   const div = document.createElement('div');
   ReactDOM.render(
