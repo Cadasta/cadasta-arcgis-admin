@@ -27,18 +27,22 @@ const getSourceMaps = (data: any) => {
 
 export default class SentryWrapper {
   public static handler(lambdaHandler: any) {
-    console.log(process.env.SENTRY_DSN);
-    Raven.config(process.env.SENTRY_DSN, {
-      dataCallback: getSourceMaps,
-      environment: process.env.SENTRY_ENV,
-      release: process.env.RELEASE
-    }).install();
-
     return async (event: AWSLambda.APIGatewayProxyEvent) => {
       try {
         return await lambdaHandler(event);  
       } catch (error) {
+        if (!process.env.SENTRY_DSN) {
+          console.error('SENTRY_DSN not found in env. Throwing error.');
+          throw error;
+        }
+
         const user: SentryUser = parseUser(event);
+
+        Raven.config(process.env.SENTRY_DSN, {
+          dataCallback: getSourceMaps,
+          environment: process.env.SENTRY_ENV,
+          release: process.env.RELEASE
+        }).install();
 
         return new Promise((resolve) => {
           Raven.captureException(error, { user }, () => {
