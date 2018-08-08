@@ -19,7 +19,8 @@ const getSourceMaps = (data: any) => {
   const stacktrace: any = data.exception && data.exception[0].stacktrace;
   if (stacktrace && stacktrace.frames) {
     stacktrace.frames.forEach((frame: any) => {
-      frame.filename = 'app:///' + path.relative('/var/task/', frame.filename);
+      const p = path.relative('/var/task/', frame.filename);
+      frame.filename = 'app:///' + p.split('/')[0] + '/' + p;
     });
   }
   return data;
