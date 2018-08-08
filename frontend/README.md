@@ -80,7 +80,7 @@ Travis automatically tests all PRs via `npm test` and `npm run validate-template
 
 #### Redux
 
-- Files container a Reducer should export the reducer as `default`. If the reducer's data is to be persisted between sessions, that persisted reducer should be exported as `default` (rather than the functional reducer itself.) This allows the application to manage how its data is persisted at a per-reducer level.
+- Files containing a Reducer should export the reducer as `default`. If the reducer's data is to be persisted between sessions, that persisted reducer should be exported as `default` (rather than the functional reducer itself.) This allows the application to manage how its data is persisted at a per-reducer level.
 
 ### Recommended Supported Developer Tools
 
