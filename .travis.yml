@@ -30,19 +30,19 @@ stages:
 - test
 - lint
 - name: deploy to staging
-  if: branch = master
+  if: branch = master AND type = push
 
 jobs:
   include:
   - stage: lint
     env:
     - DIR='./frontend'
-    script: 
+    script:
     - npm run lint
   - stage: lint
     env:
     - DIR='./api'
-    script: 
+    script:
     - npm run lint
   - stage: deploy to staging
     env:
