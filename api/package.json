@@ -6,7 +6,7 @@
   "scripts": {
     "start": "webpack -w",
     "test": "jest",
-    "build": "NODE_ENV=${NODE_ENV:-production} webpack",
+    "build": "NODE_ENV=${NODE_ENV:-development} webpack",
     "package": "sam package --template-file template.yaml --s3-bucket $npm_package_name-${STAGE:-dev} --output-template-file template.packaged.yaml",
     "deploy": ". ./setup-env; sam deploy --template-file template.packaged.yaml --stack-name $npm_package_name-${STAGE:-dev} --capabilities CAPABILITY_IAM --region us-west-2 --parameter-overrides Stage=${STAGE:-dev} SentryDsn=${SENTRY_DSN} Release=${RELEASE}",
     "clean": "rm -rf -v dist/*",
