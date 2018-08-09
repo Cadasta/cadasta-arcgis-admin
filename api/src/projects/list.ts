@@ -1,7 +1,8 @@
 import * as ProjectsDb from '../lib/db/projects';
+import SentryWrapper from '../lib/sentry';
 import { errResponse, requiredPick, response } from '../lib/utils';
 
-export default async ({queryStringParameters}: AWSLambda.APIGatewayProxyEvent): 
+const list = async ({queryStringParameters}: AWSLambda.APIGatewayProxyEvent): 
     Promise<AWSLambda.APIGatewayProxyResult> => {
   const { TABLE_NAME } = requiredPick(process.env, 'TABLE_NAME');
   const next = queryStringParameters ? queryStringParameters.next : null;
@@ -18,3 +19,5 @@ export default async ({queryStringParameters}: AWSLambda.APIGatewayProxyEvent):
     );
   }
 };
+
+export default SentryWrapper.handler(list);
