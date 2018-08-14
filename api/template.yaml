@@ -8,6 +8,7 @@ Parameters:
     Type: String
   SentryDsn:
     Type: String
+    AllowedPattern: "https://([a-z0-9]*)@sentry.io/([0-9]*)$"
   Release:
     Type: String
 
