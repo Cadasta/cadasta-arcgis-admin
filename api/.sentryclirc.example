@@ -1,0 +1,7 @@
+[defaults]
+url=https://sentry.io/
+org=cadasta
+project=arcgis-admin
+
+[auth]
+token=abc123

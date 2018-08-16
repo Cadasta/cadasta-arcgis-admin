@@ -1,8 +1,9 @@
 import * as ArcGisPortal from '../lib/arcgis';
 import * as ProjectsDb from '../lib/db/projects';
+import SentryWrapper from '../lib/sentry';
 import { errResponse, requiredPick, response } from '../lib/utils';
 
-export default async (event: AWSLambda.APIGatewayProxyEvent): Promise<AWSLambda.APIGatewayProxyResult> => {
+const create =  async (event: AWSLambda.APIGatewayProxyEvent): Promise<AWSLambda.APIGatewayProxyResult> => {
   const {
     ARCGIS_REST_URL,
     TABLE_NAME: DOMAIN_NAME
@@ -49,3 +50,5 @@ export default async (event: AWSLambda.APIGatewayProxyEvent): Promise<AWSLambda.
 
   return response({ project, groups }, 201);
 };
+
+export default SentryWrapper.handler(create);
