@@ -4,7 +4,7 @@
 */
 
 const cli = require('yargs');
-const gatewayFactory = require('./spec/factories/api-gateway');
+const gatewayFactory = require('./src/spec/factories/api-gateway');
 
 cli
   .command(['api'], 'Generate an APIGatewayProxyEvent', (y) => y

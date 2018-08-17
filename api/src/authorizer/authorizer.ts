@@ -11,6 +11,8 @@ export default async ({ authorizationToken: Authorization, methodArn: Resource }
   const response = await fetch(SELF_URL, { headers });
   const user: User = await response.json();
 
+  const [apiID, stage] = Resource.split('/');
+
   // Currently, we're assuming that an org-admin is permitted to access any resource and
   // non-org-admins can't access any resource. In the future, we may want to build out
   // more customizable configuration to allow for different permissions required for
@@ -30,7 +32,7 @@ export default async ({ authorizationToken: Authorization, methodArn: Resource }
         {
           Action: 'execute-api:Invoke',
           Effect: permitted ? 'Allow' : 'Deny',
-          Resource
+          Resource: `${apiID}/${stage}/*/*`
         }
       ],
       Version: '2012-10-17',

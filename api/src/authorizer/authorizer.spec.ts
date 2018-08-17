@@ -10,7 +10,7 @@ describe('API Gateway CustomAuthorizer', () => {
   let initialEnv: {[key: string]: string};
   const eventBase: AWSLambda.CustomAuthorizerEvent = {
     authorizationToken: 'abcd12345',
-    methodArn: 'example-arn',
+    methodArn: 'example-arn/dev/POST/hello',
     type: 'TOKEN'
   };
   const mockFetch = fetch as jest.Mock;
@@ -61,7 +61,7 @@ describe('API Gateway CustomAuthorizer', () => {
     const resp = await handler(eventBase);
     expect(resp.policyDocument.Statement.map(s => (s as any).Action)).toEqual(['execute-api:Invoke']); // tslint:disable-line
     expect(resp.policyDocument.Statement.map(s => s.Effect)).toEqual(['Allow']);
-    expect(resp.policyDocument.Statement.map(s => (s as any).Resource)).toEqual([eventBase.methodArn]); // tslint:disable-line
+    expect(resp.policyDocument.Statement.map(s => (s as any).Resource)).toEqual(['example-arn/dev/*/*']); // tslint:disable-line
   });
 
   it('should deny non-admins', async () => {

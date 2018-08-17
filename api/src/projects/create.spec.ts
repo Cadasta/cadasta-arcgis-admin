@@ -27,8 +27,10 @@ describe('Project Create API', () => {
     TABLE_NAME: 'mockTableName',
   });
   const event: AWSLambda.APIGatewayProxyEvent = APIGatewayProxyEventFactory({
-    groups: [],
-    name: 'Congo Project'
+    body: {
+      groups: ['PM'],
+      name: 'Congo Project',
+    }
   });
 
   beforeEach(() => {
@@ -55,7 +57,7 @@ describe('Project Create API', () => {
     expect(JSON.parse(response.body)).toEqual({ project: projectData, groups: groupData });
   });
 
-  it('should return server error if DB write fails', async () => {
+  it('should return server error if project creation fails', async () => {
     consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => null);
 
     const error = AWSErrorFactory.build();
@@ -68,10 +70,12 @@ describe('Project Create API', () => {
       err: `[${error.code}] ${error.message}`,
       msg: 'Failed to create project'
     });
-    expect(console.error).toHaveBeenCalledWith(JSON.stringify(error));
+    expect(console.error).toHaveBeenCalledWith(
+      'Failed to create project', JSON.stringify(error, null, 2)
+    );
   });
 
-  it('should return server error if DB write fails', async () => {
+  it('should return server error if group creation fails', async () => {
     consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => null);
 
     const project = ProjectFactory.build();
@@ -98,6 +102,8 @@ describe('Project Create API', () => {
       ],
       msg: 'Failed to create groups'
     });
-    expect(console.error).toHaveBeenCalledWith(JSON.stringify(createGroupsErrorResponse));
+    expect(console.error).toHaveBeenCalledWith(
+      'Failed to create groups', JSON.stringify(createGroupsErrorResponse, null, 2)
+    );
   });
 });

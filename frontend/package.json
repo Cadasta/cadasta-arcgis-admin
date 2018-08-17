@@ -12,13 +12,16 @@
     "react-checkbox-group": "^4.0.1",
     "react-dom": "^16.4.0",
     "react-helmet": "^5.2.0",
+    "react-icons": "^3.0.5",
     "react-redux": "^5.0.7",
     "react-router-dom": "^4.2.2",
     "react-scripts-ts": "2.16.0",
     "reactstrap": "^6.0.1",
     "redux": "^4.0.0",
-    "redux-persist": "^5.9.1",
-    "styled-components": "^3.3.0"
+    "redux-persist": "^5.10.0",
+    "redux-thunk": "^2.3.0",
+    "styled-components": "^3.3.0",
+    "typesafe-actions": "^2.0.4"
   },
   "scripts": {
     "start": "react-scripts-ts start",
@@ -43,6 +46,7 @@
     "@types/react-router-dom": "^4.2.6",
     "@types/reactstrap": "^5.0.26",
     "@types/redux-mock-store": "^1.0.0",
+    "@types/redux-thunk": "^2.1.0",
     "redux-mock-store": "^1.5.3",
     "typescript": "^2.9.1"
   }

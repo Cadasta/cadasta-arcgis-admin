@@ -56,7 +56,7 @@ h6 {
   border-color: var(--cadasta-green-dark);
 }
 
-.btn-primary:focus, 
+.btn-primary:focus,
 .btn-primary.focus {
   -webkit-boxshadow: 0 0 0 0.2rem rgba(0, 153, 117, 0.5);
   box-shadow: 0 0 0 0.2rem rgba(0, 153, 117, 0.5);
@@ -79,4 +79,31 @@ h6 {
   padding-left: 0;
   margin-top: -36px;
   font-size: 12px;
+}
+
+.icon-spin {
+  -webkit-animation: icon-spin 2s infinite linear;
+          animation: icon-spin 2s infinite linear;
+}
+
+@-webkit-keyframes icon-spin {
+  0% {
+    -webkit-transform: rotate(0deg);
+            transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(359deg);
+            transform: rotate(359deg);
+  }
+}
+
+@keyframes icon-spin {
+  0% {
+    -webkit-transform: rotate(0deg);
+            transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(359deg);
+            transform: rotate(359deg);
+  }
 }

@@ -61,6 +61,7 @@ Travis automatically tests all PRs via `npm test` and `npm run validate-template
   - [A Better File Structure For React/Redux Applications](https://marmelab.com/blog/2015/12/17/react-directory-structure.html): Our project is organized by grouping files by domain, as described in this blogpost. This should feel more natural to someone coming from a framework such as Django.
   - [Presentation and Container Components](https://medium.com/@dan_abramov/smart-and-dumb-components-7ca2f9a7c7d0)
 - **Redux**
+  - [React & Redux in TypeScript - Static Typing Guide](https://github.com/piotrwitek/react-redux-typescript-guide)
   - [Getting Started with Redux (video series)](https://egghead.io/courses/getting-started-with-redux)
   - [Using the Redux Store Like a Database](https://hackernoon.com/shape-your-redux-store-like-your-database-98faa4754fd5)
 
@@ -68,9 +69,18 @@ Travis automatically tests all PRs via `npm test` and `npm run validate-template
 
 **Style Rules**
 
+#### Components
+
 - Files containing a Container and/or Component should always export their Container or Component (if no Container is available) as `default` _(Note: this [is contentious](https://basarat.gitbooks.io/typescript/docs/tips/defaultIsBad.html) and may change in the future)_. Files that do not export a Container or Component should have no `default` export. A file should never export more than one Container or Component.
 - Filenames for files exporting a Container or Component should be uppercased. Any supporting file (e.g. `css` or `.spec.ts` files should also be uppercase). Filenames for files that do not export a Container or Component should be lowercased.
+
+#### Testing
+
 - Test files should have filenames that mirror the files they are testing, but end with `.spec.ts`
+
+#### Redux
+
+- Files containing a Reducer should export the reducer as `default`. If the reducer's data is to be persisted between sessions, that persisted reducer should be exported as `default` (rather than the functional reducer itself.) This allows the application to manage how its data is persisted at a per-reducer level.
 
 ### Recommended Supported Developer Tools
 

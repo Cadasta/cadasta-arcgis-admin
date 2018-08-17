@@ -1,6 +1,9 @@
+import { Reducer } from 'redux';
+import { persistReducer } from 'redux-persist';
+import storage from 'redux-persist/lib/storage';
 import { AuthAction, LOGIN, LOGOUT } from './authActions';
 
-export interface AuthState {
+export interface PopulatedAuthState {
   clientId: string;
   username: string;
   token: string;
@@ -9,15 +12,22 @@ export interface AuthState {
   tokenDuration: number;
   refreshTokenTTL: number;
 }
+export type AuthState = PopulatedAuthState | {};
 
-export function authReducer(state: AuthState | null = null, action: AuthAction): AuthState | null {
+export const defaultState: AuthState = {};
+
+export function authReducer(state: AuthState = defaultState, action: AuthAction): AuthState {
   switch (action.type) {
     case LOGIN:
       return action.value;
     case LOGOUT:
-      return null;
+      return {};
     default:
-      return null;
+      return state;
   }
-  return state;
 }
+
+export default persistReducer(
+  { key: 'auth', storage },
+  authReducer
+) as Reducer;

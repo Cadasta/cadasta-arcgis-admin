@@ -1,11 +1,7 @@
 import { SimpleDB } from 'aws-sdk';
 import slugify from 'slugify';
 
-export async function create(
-  DomainName: string,
-  name: string,
-  username: string
-): Promise<Project> {
+export async function create(DomainName: string, name: string, username: string): Promise<Project> {
   const simpledb = new SimpleDB();
   const slug: string = slugify(name).toLowerCase();
 
@@ -55,10 +51,7 @@ export async function create(
   }
 }
 
-export async function list(
-  DomainName: string,
-  next?: string
-): Promise<ProjectListResponse> {
+export async function list(DomainName: string, next?: string): Promise<ProjectListResponse> {
   const simpledb = new SimpleDB();
   const params: SimpleDB.SelectRequest = {
     SelectExpression: `select * from \`${DomainName}\``,
