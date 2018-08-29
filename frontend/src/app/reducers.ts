@@ -1,4 +1,5 @@
 import { applyMiddleware, combineReducers, compose, createStore } from 'redux';
+import { reducer as notifReducer } from 'redux-notifications';
 import { persistStore } from 'redux-persist';
 import thunk from 'redux-thunk';
 
@@ -7,6 +8,13 @@ import authReducer, { AuthState, defaultState as defaultAuthState } from '../aut
 import projectsReducer, { defaultState as defaultProjectsState, ProjectsState } from '../projects/projectsReducer';
 import { CustomWindow } from '../shared/custom.window';
 declare let window: CustomWindow;
+
+// Reducers
+const reducers = combineReducers({
+  auth: authReducer,
+  notifs: notifReducer,
+  projects: projectsReducer,
+});
 
 // Initial State
 export interface StoreState {
@@ -27,11 +35,7 @@ const enhancer = composeEnhancers(
 // Store
 type Actions = AuthAction;
 export const store = createStore<StoreState, Actions, any, any>(
-  // Reducers
-  combineReducers({
-    auth: authReducer,
-    projects: projectsReducer,
-  }),
+  reducers,
   initialState,
   enhancer
 );

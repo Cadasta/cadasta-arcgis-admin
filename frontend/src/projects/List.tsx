@@ -1,8 +1,10 @@
 import * as React from 'react';
 import { MdRefresh } from 'react-icons/md';
 import { connect } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, RouteProps } from 'react-router-dom';
 import { Alert, Breadcrumb, BreadcrumbItem, Button, Table } from 'reactstrap';
+import { Dispatch } from 'redux';
+import { actions as notifActions } from 'redux-notifications';
 
 import { StoreState } from '../app/reducers';
 import { urls } from '../app/routes';
@@ -12,11 +14,17 @@ import { ProjectsState } from './projectsReducer';
 import { fetchProjects as fetchProjectsThunk } from './projectsThunks';
 import { Project } from './types';
 
-interface Props extends React.HTMLAttributes<HTMLElement> {
-  token: string;
-  fetchProjects: typeof fetchProjectsThunk;
+interface StateFromProps {
   projects: ProjectsState;
+  token?: string;
 }
+interface DispatchFromProps {
+  dispatch: Dispatch;
+  fetchProjects: typeof fetchProjectsThunk;
+}
+type ComponentProps = RouteProps;
+type Props = StateFromProps & DispatchFromProps & ComponentProps;
+
 interface State {
   projects: ReadonlyArray<Project>;
 }
@@ -37,8 +45,8 @@ const ProjectsTable = ({ projects }: {projects: ReadonlyArray<Project>}) => (
           <tr key={i}>
             <th scope="row">{ project.name }</th>
             <td>{ project.created_by }</td>
-            <td>{ new Date(project.created_date).toDateString() }</td>
-            <td>{ new Date(project.modified_date).toDateString() }</td>
+            <td title={project.created_date}>{ new Date(project.created_date).toDateString() }</td>
+            <td title={project.modified_date}>{ new Date(project.modified_date).toDateString() }</td>
           </tr>
         )
       }
@@ -90,10 +98,16 @@ class List extends React.Component<Props, State> {
   }
 }
 
-const mapStateToProps = ({ auth, projects }: StoreState) => ({
+const mapStateToProps = ({ auth, projects }: StoreState): StateFromProps => ({
   projects,
   token: isLoggedIn(auth) ? auth.token : undefined,
 });
-export default connect(mapStateToProps, {
-  fetchProjects: fetchProjectsThunk
-})(List);
+const mapDispatchToProps = (dispatch: Dispatch): DispatchFromProps => ({
+  dispatch,
+  fetchProjects: () => dispatch<any>(fetchProjectsThunk())
+});
+
+export default connect<StateFromProps, DispatchFromProps, ComponentProps>(
+  mapStateToProps,
+  mapDispatchToProps,
+)(List);

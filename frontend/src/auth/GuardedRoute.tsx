@@ -1,6 +1,7 @@
 import * as React from 'react';
-import { connect, Dispatch } from 'react-redux';
+import { connect } from 'react-redux';
 import { Redirect, Route } from 'react-router-dom';
+import { Dispatch } from 'redux';
 
 import { StoreState } from '../app/reducers';
 import { RouteDeclaration, urls } from '../app/routes';
