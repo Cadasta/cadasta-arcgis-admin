@@ -1,0 +1,44 @@
+.notif-transition-enter {
+  opacity    : 0.01;
+  transition : opacity .5s ease-in;
+}
+
+.notif-transition-enter-active {
+  opacity : 1;
+}
+
+.notif-transition-leave {
+  opacity    : 1;
+  transition : opacity .5s ease-in;
+}
+
+.notif-transition-leave-active {
+  opacity : 0.01;
+}
+
+.notif--success {
+  background-color: #64ce83;
+}
+
+.notif--info {
+  background-color: #3ea2ff;
+}
+
+.notif--warning {
+  background-color: #ff7f48;
+}
+
+.notif--danger {
+  background-color: #e74c3c;
+}
+
+.notif__container {
+  position  : fixed;
+  top       : 60px;
+  right     : 0;
+  left      : 0;
+  z-index   : 1000;
+  width     : 80%;
+  max-width : 400px;
+  margin    : auto;
+}

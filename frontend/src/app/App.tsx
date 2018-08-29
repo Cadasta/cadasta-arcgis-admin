@@ -4,10 +4,12 @@ import { BrowserRouter as Router } from 'react-router-dom';
 import { Container } from 'reactstrap';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
-
 import './App.css';
+
+import TokenValidator from '../auth/TokenValidator';
 import Footer from './Footer';
 import Header from './Header';
+import Notifications from './Notifications';
 import { router } from './routes';
 
 class App extends React.Component {
@@ -19,6 +21,8 @@ class App extends React.Component {
             defaultTitle="Welcome"
             titleTemplate="%s | Cadasta"
           />
+          <TokenValidator />
+          <Notifications />
           <Container>
             <div className="col-lg-8 offset-lg-2 px-4 pt-0 position-static">
               <Header />
