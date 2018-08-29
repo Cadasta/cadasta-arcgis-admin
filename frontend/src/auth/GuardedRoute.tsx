@@ -9,11 +9,16 @@ import { AuthAction, login, LoginAction } from './authActions';
 import { Guard } from './guards';
 import { completeOAuth2Flow, isCompletingLogin } from './oauth2';
 
-export interface GuardedRouteProps extends RouteDeclaration {
+interface StateFromProps {
   state: StoreState;
+}
+interface DispatchFromProps {
   loginUser: (session: string) => LoginAction;
 }
-const GuardedRoute: React.SFC<GuardedRouteProps> = ({
+type ComponentProps = RouteDeclaration;
+type Props = StateFromProps & DispatchFromProps & ComponentProps;
+
+const GuardedRoute: React.SFC<Props> = ({
   component,
   checks = [],
   state,
@@ -24,9 +29,7 @@ const GuardedRoute: React.SFC<GuardedRouteProps> = ({
   // ensures that the `state` object is updated with the now-logged-in details.
   if (isCompletingLogin()) {
     loginUser(completeOAuth2Flow());
-    const renderRedirect = (props: any) => (
-      <Redirect to={{ pathname: rest.path || '/' }} />
-    );
+    const renderRedirect = (props: any) => <Redirect to={{ pathname: rest.path || '/' }} />;
     return <Route {...rest} render={renderRedirect} />;
   }
 
@@ -54,8 +57,11 @@ const GuardedRoute: React.SFC<GuardedRouteProps> = ({
   return <Route {...rest} render={render} />;
 };
 
-const mapStateToProps = (state: StoreState) => ({ state });
-const mapDispatchToProps = (dispatch: Dispatch<AuthAction>) => ({
+const mapStateToProps = (state: StoreState): StateFromProps => ({ state });
+const mapDispatchToProps = (dispatch: Dispatch<AuthAction>): DispatchFromProps => ({
   loginUser: (session: string) => dispatch(login(session))
 });
-export default connect(mapStateToProps, mapDispatchToProps)(GuardedRoute);
+export default connect<StateFromProps, DispatchFromProps, ComponentProps>(
+  mapStateToProps,
+  mapDispatchToProps
+)(GuardedRoute);

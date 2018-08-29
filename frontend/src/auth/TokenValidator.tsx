@@ -70,11 +70,11 @@ class TokenValidator extends React.Component<Props, State> {
         1000,
       );
 
-      // When login counter gets to 0...
       this.setState({
         intervals: this.state.intervals.concat([
           interval,
           window.setTimeout(
+            // When login counter gets to 0...
             () => {
               // stop creating new messages
               this.resetNotifications();

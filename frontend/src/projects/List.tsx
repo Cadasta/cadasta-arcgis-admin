@@ -4,7 +4,6 @@ import { connect } from 'react-redux';
 import { Link, RouteProps } from 'react-router-dom';
 import { Alert, Breadcrumb, BreadcrumbItem, Button, Table } from 'reactstrap';
 import { Dispatch } from 'redux';
-import { actions as notifActions } from 'redux-notifications';
 
 import { StoreState } from '../app/reducers';
 import { urls } from '../app/routes';
