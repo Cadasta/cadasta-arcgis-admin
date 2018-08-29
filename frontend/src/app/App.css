@@ -12,6 +12,10 @@ body {
   overflow-x: hidden;
 }
 
+body div {
+  overflow-x: hidden;
+}
+
 a {
   color: var(--cadasta-blue);
 }

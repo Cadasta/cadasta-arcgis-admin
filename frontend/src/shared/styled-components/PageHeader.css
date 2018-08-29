@@ -10,7 +10,7 @@ h1 {
   background-color: #efefef;
   position: absolute;
   height: 4.85rem; /* Danger, have to manually match this to h1 size */
-  width: 200vw;
+  width: 150vw;
   left: -50vw;
   z-index: -1;
 }
