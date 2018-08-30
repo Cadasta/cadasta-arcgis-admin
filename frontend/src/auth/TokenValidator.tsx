@@ -80,7 +80,6 @@ class TokenValidator extends React.Component<Props, State> {
               this.resetNotifications();
               // replace going-to-logout warning notification with just-logged-out error notification
               this.props.sendNotification({
-                id,
                 kind: 'danger',
                 message: `Your login has expired.`
               });
