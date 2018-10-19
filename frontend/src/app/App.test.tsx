@@ -9,7 +9,8 @@ const mockStore = configureStore([]);
 
 it('renders without crashing', () => {
   const store = mockStore({
-    auth: {}
+    auth: {},
+    notifs: [],
   });
   const div = document.createElement('div');
   ReactDOM.render(

@@ -1,8 +1,9 @@
 import * as React from 'react';
 import { Checkbox, CheckboxGroup } from 'react-checkbox-group';
-import { connect, DispatchProp } from 'react-redux';
+import { connect } from 'react-redux';
 import { Link, RouteProps } from 'react-router-dom';
 import { Alert, Breadcrumb, BreadcrumbItem, Button, Col, Form, FormGroup, FormText, Input, Label } from 'reactstrap';
+import { Dispatch } from 'redux';
 
 import { StoreState } from '../app/reducers';
 import { urls } from '../app/routes';
@@ -12,11 +13,17 @@ import { ProjectsState } from './projectsReducer';
 import { createProject as createProjectThunk } from './projectsThunks';
 import { groupShortNames, projectName } from './types';
 
-interface Props extends RouteProps, DispatchProp {
-  token: string;
-  createProject: typeof createProjectThunk;
+interface StateFromProps {
   projects: ProjectsState;
+  token?: string;
 }
+interface DispatchFromProps {
+  createProject: typeof createProjectThunk;
+  dispatch: Dispatch;
+}
+type ComponentProps = RouteProps;
+type Props = StateFromProps & DispatchFromProps & ComponentProps;
+
 interface State {
   projectName: projectName;
   projectGroups: groupShortNames;
@@ -113,10 +120,15 @@ class Create extends React.Component<Props, State> {
   }
 }
 
-const mapStateToProps = ({ auth, projects }: StoreState) => ({
+const mapStateToProps = ({ auth, projects }: StoreState): StateFromProps => ({
   projects,
   token: isLoggedIn(auth) ? auth.token : undefined,
 });
-export default connect(mapStateToProps, {
-  createProject: createProjectThunk
-})(Create);
+const mapDispatchToProps = (dispatch: Dispatch): DispatchFromProps => ({
+  createProject: payload => dispatch<any>(createProjectThunk(payload)),
+  dispatch,
+});
+export default connect<StateFromProps, DispatchFromProps, ComponentProps>(
+  mapStateToProps,
+  mapDispatchToProps,
+)(Create);
